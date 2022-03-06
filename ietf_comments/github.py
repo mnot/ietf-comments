@@ -34,7 +34,7 @@ def create_issues(reponame, ui, comments, labels=None):
     for issue_type in comments.issues.keys():
         issues = comments.issues[issue_type]
         for issue in issues:
-            title = issue[0]
+            title = f"{issue_type}: {issue[0]}"
             content = issue[1]
             number = repo.create_issue(title, content, labels)
             ui.status(f"* Created issue {number}: {title}")
