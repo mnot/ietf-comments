@@ -1,6 +1,0 @@
-commonmark
-pygithub
-
-[dev]
-mypy
-black
