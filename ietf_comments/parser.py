@@ -138,7 +138,12 @@ class CommentRenderer(Renderer):
         out = []
         for word in text.split(" "):
             if in_link:
-                out.append(f"{word}]({base}#section-{word})")
+                section_id = word
+                rest = ""
+                if not word[-1].isnumeric():
+                    section_id = word[:-1]
+                    rest = word[-1]
+                out.append(f"{section_id}]({base}#section-{section_id}){rest}")
                 in_link = False
             elif word.lower().strip() in self.section_markers:
                 out.append(f"[{word}")

@@ -6,7 +6,7 @@
 
 I don't really like this. It's nasty and should go away.
 
-Yes, that's what I think. In section 5 especially.
+Yes, that's what I think. In section 5.6, especially.
 
 ### Topic number 2
 
