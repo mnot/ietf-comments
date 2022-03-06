@@ -16,15 +16,15 @@ def parse_args():
         "-g",
         "--github_repo",
         dest="github_repo",
-        help="Create issues in the named repo; e.g., username/reponame",
+        help="create issues in the named repo; e.g., username/reponame",
     )
 
     parser.add_argument(
         "-l",
-        "--github-labels",
-        dest="github_labels",
+        "--github-label",
+        dest="github_label",
         nargs="*",
-        help="Labels to assign to created GitHub issues",
+        help="label(s) to assign to created GitHub issues",
     )
 
     parser.add_argument(
@@ -32,14 +32,14 @@ def parse_args():
         "--version",
         action="version",
         version=f"{__version__}",
-        help="Print version and exit",
+        help="print version and exit",
     )
 
     parser.add_argument(
         "comment_file",
         nargs="+",
         type=argparse.FileType("r"),
-        help="Comment file(s) to process",
+        help="comment file(s) to process",
     )
 
     return parser.parse_args()
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     cli = Cli()
     for comment_file in args.comment_file:
         comments = parse_comments(comment_file, cli)
-        labels = args.github_labels or []
+        labels = args.github_label or []
         if args.github_repo:
             create_issues(args.github_repo, cli, comments, labels)
         else:
