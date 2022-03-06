@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+
+import argparse
+import sys
+
+from ietf_comments.github import create_issues
+from ietf_comments.parser import parse_comments
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Process an IETF comments file")
+    parser.add_argument(
+        "-g",
+        "--github_repo",
+        dest="github_repo",
+        help="Create issues in the named repo; e.g., username/reponame",
+    )
+
+    parser.add_argument(
+        "-l",
+        "--github-labels",
+        dest="github_labels",
+        nargs="*",
+        help="Labels to assign to created GitHub issues",
+    )
+
+    parser.add_argument(
+        "comment_file",
+        nargs="+",
+        type=argparse.FileType("r"),
+        help="Comment file(s) to process",
+    )
+
+    return parser.parse_args()
+
+
+if __name__ == "__main__":
+    args = parse_args()
+    for comment_file in args.comment_file:
+        comments = parse_comments(comment_file)
+        labels = args.github_labels or []
+        if args.github_repo:
+            create_issues(args.github_repo, comments, labels)
+        else:
+            print(comments)
