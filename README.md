@@ -35,7 +35,7 @@ If you'd like these issues to have a specific label, run:
 
 The IETF Comment Format is a set of restrictions on the [markdown](https://commonmark.org) format that facilitates identifying the issues raised in the comments and their types, so that tooling can more easily digest it.
 
-See the [examples directory](examples/) for examples of the format in use.
+See the [examples directory](https://github.com/mnot/ietf-comments/tree/main/examples) for examples of the format in use.
 
 
 ### Document Identity
