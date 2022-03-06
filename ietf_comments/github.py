@@ -10,7 +10,7 @@ class GithubRepo:
     def __init__(self, reponame, ui):
         token = os.environ.get("GITHUB_AUTH_TOKEN", None)
         if token is None:
-            ui.error("GITHUB_AUTH_TOKEN not set.\n")
+            ui.error("GITHUB_AUTH_TOKEN not set.")
         g = Github(token)
         self.repo = g.get_repo(reponame)
 
@@ -30,11 +30,11 @@ def create_issues(reponame, ui, comments, labels=None):
     repo = GithubRepo(reponame, ui)
     if labels is None:
         labels = []
-    ui.status(f"* Creating issues in {reponame}\n")
+    ui.status(f"* Creating issues in {reponame}")
     for issue_type in comments.issues.keys():
         issues = comments.issues[issue_type]
         for issue in issues:
             title = issue[0]
             content = issue[1]
             number = repo.create_issue(title, content, labels)
-            ui.status(f"* Created issue {number}: {title}\n")
+            ui.status(f"* Created issue {number}: {title}")
