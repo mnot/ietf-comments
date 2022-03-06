@@ -1,7 +1,12 @@
 
 # The IETF Comments Processor
 
-This is a script that processes the IETF Comments Format (see below) both to validate instances of it, and to create GitHub issues from it.
+Handling comments from the IESG and multiple directorate reviews can be burdensome for document authors, because of the sheer number of comments, and because they come in an unstructured format that has to be manually processed.
+
+This script defines a [markdown](https://commonmark.org)-based format for IETF comments, and can create GitHub issues for the comments it finds. When used properly, it can help automate a formerly tiresome task.
+
+Area directors and directorate reviewers can use it to ease the burden for authors. Even when they don't, authors can reduce their work by editing submitted issues to fit the markdown format.
+
 
 ## Installation
 
