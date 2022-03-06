@@ -3,6 +3,9 @@
 import argparse
 import sys
 
+from colorama import Fore, Back, Style
+
+from ietf_comments import __version__
 from ietf_comments.github import create_issues
 from ietf_comments.parser import parse_comments
 
@@ -25,6 +28,14 @@ def parse_args():
     )
 
     parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=f"{__version__}",
+        help="Print version and exit",
+    )
+
+    parser.add_argument(
         "comment_file",
         nargs="+",
         type=argparse.FileType("r"),
@@ -34,12 +45,32 @@ def parse_args():
     return parser.parse_args()
 
 
+class Cli:
+    @classmethod
+    def out(cls, content):
+        sys.stdout.write(content)
+
+    @classmethod
+    def status(cls, message):
+        sys.stderr.write(f"{message}\n")
+
+    @classmethod
+    def warn(cls, message):
+        sys.stderr.write(f"{Fore.YELLOW}Warning{Style.RESET_ALL}: {message}\n")
+
+    @classmethod
+    def error(cls, message):
+        sys.stderr.write(f"{Fore.RED}Error{Style.RESET_ALL}: {message}\n")
+        sys.exit(1)
+
+
 if __name__ == "__main__":
     args = parse_args()
+    cli = Cli()
     for comment_file in args.comment_file:
-        comments = parse_comments(comment_file)
+        comments = parse_comments(comment_file, cli)
         labels = args.github_labels or []
         if args.github_repo:
-            create_issues(args.github_repo, comments, labels)
+            create_issues(args.github_repo, cli, comments, labels)
         else:
-            print(comments)
+            cli.out(str(comments))

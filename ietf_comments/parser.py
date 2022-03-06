@@ -1,6 +1,4 @@
-import sys
-
-from colorama import Fore, Back, Style
+from colorama import Fore, Style
 import commonmark
 from commonmark.render.renderer import Renderer
 
@@ -10,7 +8,8 @@ class CommentRenderer(Renderer):
     section_map = {"discusses": "discuss", "comments": "comment", "nits": "nit"}
     section_markers = ["section", "sections", "s", "§"]
 
-    def __init__(self, options={}):
+    def __init__(self, ui, options={}):
+        self.ui = ui
         self.options = options
         self._buffer = []
         self._section = None
@@ -37,7 +36,7 @@ class CommentRenderer(Renderer):
 
     def handle_h1(self, content):
         if self.doc is not None:
-            self.error("More than one h1 header.")
+            self.ui.error("More than one h1 header.")
         self.title = content
         docname = None
         words = content.split()
@@ -46,14 +45,16 @@ class CommentRenderer(Renderer):
                 docname = word
                 break
         if docname is None:
-            self.error("h1 header doesn't contain draft name (starting with 'draft-').")
+            self.ui.error(
+                "h1 header doesn't contain draft name (starting with 'draft-')."
+            )
         segments = docname.split("-")
         self.doc = "-".join(segments[:-1])
         revision = segments[-1]
         if revision.isnumeric():
             self.revision = revision
         else:
-            self.error("h1 header draft name doesn't include revision")
+            self.ui.error("h1 header draft name doesn't include revision")
 
     def handle_h2(self, content):
         content = content.lower()
@@ -62,7 +63,7 @@ class CommentRenderer(Renderer):
         if content in self.sections:
             self._section = content
         else:
-            self.warn(f"Unrecognised h2 section {content}.")
+            self.ui.warn(f"Unrecognised h2 section {content}.")
             self._section = None
 
     def handle_h3(self, content):
@@ -96,14 +97,7 @@ class CommentRenderer(Renderer):
         if not entering:
             self.cleanup()
             if sum([len(l) for l in self.issues.values()]) == 0:
-                self.warn("Did not find any issues.")
-
-    def warn(self, message):
-        sys.stderr.write(f"{Fore.YELLOW}Warning{Style.RESET_ALL}: {message}\n")
-
-    def error(self, message):
-        sys.stderr.write(f"{Fore.RED}Error{Style.RESET_ALL}: {message}\n")
-        sys.exit(1)
+                self.ui.warn("Did not find any issues.")
 
     def cleanup(self):
         if self._section:
@@ -154,15 +148,9 @@ class CommentRenderer(Renderer):
         return " ".join(out)
 
 
-def parse_comments(fd):
+def parse_comments(fd, ui):
     parser = commonmark.Parser()
     doc = parser.parse(fd.read())
-    renderer = CommentRenderer()
+    renderer = CommentRenderer(ui)
     renderer.render(doc)
     return renderer
-
-
-if __name__ == "__main__":
-    with open(sys.argv[1], "r", encoding="utf-8") as fd:
-        comments = parse_comments(fd)
-        print(comments)
