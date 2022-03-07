@@ -33,7 +33,7 @@ Section 2.1.1. , paragraph 6, nit:
 Use "an" instead of "a" if the following word starts with a vowel sound, e.g.
 "an article", "an hour". (Also elsewhere.)
 
-Section 2.1.2. , paragraph 1, nit:
+Section 2.1.2., paragraph 1, nit:
 > protocol identifier is able to be expressed as an sf-token
 
 Avoid the passive voice after "to be able to".
