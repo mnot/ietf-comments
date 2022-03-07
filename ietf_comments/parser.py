@@ -165,10 +165,13 @@ class CommentRenderer(Renderer):
                     section_id = word
                     rest = ""
                     extra_chars = 0
-                    while not section_id[-1].isnumeric():
-                        extra_chars += 1
-                        section_id = word[:-extra_chars]
-                        rest = word[-extra_chars]
+                    try:
+                        while not section_id[-1].isnumeric():
+                            extra_chars += 1
+                            section_id = word[:-extra_chars]
+                            rest = word[-extra_chars]
+                    except IndexError:
+                        self.ui.warn(f"Section ID '{word}' isn't numeric.")
                     line_out.append(f"{section_id}]({base}#section-{section_id}){rest}")
                     in_link = False
                 elif word.lower().strip() in self.section_markers:
