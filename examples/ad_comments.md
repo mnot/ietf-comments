@@ -7,8 +7,8 @@
 
 Section 2 , paragraph 12, comment:
 >    When adding a value to the Proxy-Status field, intermediaries SHOULD
->    preserve the existing members of the field, to allow debugging of the
->    entire chain of intermediaries handling the request.
+>    preserve the existing members of the field to allow debugging of the
+>    entire chain of intermediaries handling the request,
 
 I'm surprised this is not a MUST? Are there any valid reasons for not observing
 order?
@@ -23,17 +23,17 @@ will likely be some false positives. There is no need to let me know what you
 did with these suggestions.
 
 "Table of Contents", paragraph 2, nit:
-> e critical infrastructure of many Web sites. Typically, HTTP intermediaries
+> critical infrastructure of many Web sites.
 
 Nowadays, it's more common to write this as one word.
 
 Section 2.1.1. , paragraph 6, nit:
-> ed HTTP Status Code. When generating a HTTP response containing "error", its
+> HTTP Status Code. When generating a HTTP response containing error, its
 
 Use "an" instead of "a" if the following word starts with a vowel sound, e.g.
 "an article", "an hour". (Also elsewhere.)
 
 Section 2.1.2. , paragraph 1, nit:
->  protocol identifier is able to be expressed as an sf-token using ASCII encod
+> protocol identifier is able to be expressed as an sf-token
 
 Avoid the passive voice after "to be able to".

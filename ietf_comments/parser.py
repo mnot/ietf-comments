@@ -2,11 +2,14 @@ from colorama import Fore, Style
 import commonmark
 from commonmark.render.renderer import Renderer
 
+from .changes import DocChanges
+
 
 class CommentRenderer(Renderer):
     sections = ["discuss", "comment", "nit"]
     section_map = {"discusses": "discuss", "comments": "comment", "nits": "nit"}
     section_markers = ["section", "sections", "s", "§"]
+    BLOCK = "block"
 
     def __init__(self, ui, options={}):
         self.ui = ui
@@ -14,13 +17,23 @@ class CommentRenderer(Renderer):
         self._buffer = []
         self._section = None
         self._current_issue = None
+        self._context = None
+        self._context_buffer = []
         self.title = None
         self.doc = None
         self.revision = None
+        self.changes = None
         self.issues = {"discuss": [], "comment": [], "nit": []}
 
     def text(self, node, entering=None):
         self._buffer.append(node.literal)
+        if self._context == self.BLOCK:
+            self._context_buffer.append(node.literal)
+
+    def softbreak(self, node, entering=None):
+        self._buffer.append(" ")
+        if self._context_buffer:
+            self._context_buffer.append(" ")
 
     def get_buffer(self):
         content = self.link_sections("".join(self._buffer))
@@ -55,6 +68,7 @@ class CommentRenderer(Renderer):
             self.revision = revision
         else:
             self.ui.error("h1 header draft name doesn't include revision")
+        self.changes = DocChanges(self.doc, self.revision, self.ui)
 
     def handle_h2(self, content):
         content = content.lower()
@@ -80,6 +94,14 @@ class CommentRenderer(Renderer):
     def block_quote(self, node, entering):
         if entering:
             self._buffer.append("> ")
+            self._context = self.BLOCK
+        else:
+            self._context = None
+            content = "".join(self._context_buffer)
+            self._context_buffer = []
+            change_location = self.changes.find_change_line(content)
+            if change_location is None:
+                self.ui.warn(f"Can't find quoted text in document: {content}")
 
     def emph(self, node, entering):
         self._buffer.append("_")
