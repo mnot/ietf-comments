@@ -14,7 +14,7 @@ I'm surprised this is not a MUST? Are there any valid reasons for not observing
 order?
 
 
-### Nits
+## Nits
 
 All comments below are about very minor potential issues that you may choose to
 address in some way - or ignore - as you see fit. Some were flagged by
