@@ -74,6 +74,29 @@ Note that:
 * The type can be 'discuss', 'comment', or 'nit' with any capitalisation
 * Each type header can occur exactly once in the document
 
-Individual issues can be identified with `h3` headers, as they are above. Alternatively, if a section does not have `h3` headers, the text in that section will be considered to be a single issue.
+### Issues
 
-Within text, section links are automatically added. It is assumed that the bare words 'section' and 's' are followed by a section number to be referenced in the document (as in the example above).
+Individual issues within a comment section can be identified with `h3` headers, as they are above. Alternatively, if a comment section does not have `h3` headers, the text in that section will be considered to be a single issue.
+
+Issue text can have the following features:
+
+### Change Proposals
+
+A change can be proposed by preceding two quoted sections with OLD and NEW; for example:
+
+~~~ markdown
+OLD
+
+> The foo header is a bar [HTTP].
+
+NEW
+
+> The foo header field is a bar [HTTP].
+~~~
+
+Note that the quoted text should be in the textual format, not XML or Markdown.
+
+
+#### Section Linking
+
+Within issue text, section links are automatically added. It is assumed that the bare words 'section' and 's' are followed by a section number to be referenced in the document (as in the example above).
