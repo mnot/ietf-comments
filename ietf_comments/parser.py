@@ -157,22 +157,25 @@ class CommentRenderer(Renderer):
     def link_sections(self, text):
         base = f"https://www.ietf.org/archive/id/{self.doc}-{self.revision}.html"
         in_link = False
-        out = []
-        for word in text.split(" "):
-            if in_link:
-                section_id = word
-                rest = ""
-                if not word[-1].isnumeric():
-                    section_id = word[:-1]
-                    rest = word[-1]
-                out.append(f"{section_id}]({base}#section-{section_id}){rest}")
-                in_link = False
-            elif word.lower().strip() in self.section_markers:
-                out.append(f"[{word}")
-                in_link = True
-            else:
-                out.append(word)
-        return " ".join(out)
+        text_out = []
+        for line in text.split("\n"):
+            line_out = []
+            for word in line.split(" "):
+                if in_link:
+                    section_id = word
+                    rest = ""
+                    if not word[-1].isnumeric():
+                        section_id = word[:-1]
+                        rest = word[-1]
+                    line_out.append(f"{section_id}]({base}#section-{section_id}){rest}")
+                    in_link = False
+                elif word.lower().strip() in self.section_markers:
+                    line_out.append(f"[{word}")
+                    in_link = True
+                else:
+                    line_out.append(word)
+            text_out.append(" ".join(line_out))
+        return "\n".join(text_out)
 
 
 def parse_comments(fd, ui):
