@@ -27,7 +27,7 @@ class CommentRenderer(Renderer):
 
     def text(self, node, entering=None):
         self._buffer.append(node.literal)
-        if self._context == self.BLOCK:
+        if self._context is not None:
             self._context_buffer.append(node.literal)
 
     def softbreak(self, node, entering=None):
