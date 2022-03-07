@@ -5,7 +5,7 @@ PROJECT=ietf_comments
 
 .PHONY: run
 test: venv
-	PYTHONPATH=$(VENV):. $(VENV)/python bin/ietf-comments test.md
+	PYTHONPATH=$(VENV):. $(VENV)/python bin/ietf-comments examples/ad_comments.md
 
 .PHONY: clean
 clean:
