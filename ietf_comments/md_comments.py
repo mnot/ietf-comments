@@ -183,7 +183,7 @@ class CommentRenderer(Renderer):
         return "\n".join(text_out)
 
 
-def parse_comments(fd, ui):
+def parse_markdown_comments(fd, ui):
     parser = commonmark.Parser()
     doc = parser.parse(fd.read())
     renderer = CommentRenderer(ui)

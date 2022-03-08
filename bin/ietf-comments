@@ -4,7 +4,7 @@ import argparse
 
 from ietf_comments import __version__
 from ietf_comments.github import create_issues
-from ietf_comments.parser import parse_comments
+from ietf_comments.md_comments import parse_markdown_comments
 from ietf_comments.ui import Cli
 
 
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     args = parse_args()
     cli = Cli()
     for comment_file in args.comment_file:
-        comments = parse_comments(comment_file, cli)
+        comments = parse_markdown_comments(comment_file, cli)
         labels = args.github_label or []
         if args.github_repo:
             create_issues(args.github_repo, cli, comments, labels)
