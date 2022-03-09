@@ -1,11 +1,16 @@
 
 # The IETF Comments Processor
 
-Handling comments from the IESG and multiple directorate reviews can be burdensome for document authors, because of the sheer number of comments, and because they come in an unstructured format that has to be manually processed.
+Handling comments from the IESG, multiple directorate reviews, and in AUTH48 can be burdensome for document authors, because of the sheer number of comments, and because they come in an unstructured format that has to be manually processed.
 
-This script defines a [markdown](https://commonmark.org)-based format for IETF comments, and can create GitHub issues for the comments it finds. When used properly, it can help automate a formerly tiresome task.
+This package installs two commands:
 
-Area directors and directorate reviewers can use it to ease the burden for authors. Even when they don't, authors can reduce their work by editing submitted issues to fit the markdown format.
+* `ietf-comments` processes comments from the IESG and directorates in a [markdown](https://commonmark.org)-based format.
+* `rfced-comments` processes comments from the RFC Editor in RFC XML files.
+
+Both can be used to create GitHub issues for the comments they find. When used properly, they can help automate formerly tiresome tasks.
+
+For IESG and directorate comments, this tool uses the [IETF Comment Markdown format](#format), which is similar to the semi-structured format that ADs and directorates use now. Ideally, they will create comments in that format for easy processing, but even when they don't, most comments can easily be transformed into it for processing.
 
 
 ## Installation
@@ -14,13 +19,14 @@ To install ietf-comments, you'll need [Python 3](https://www.python.org/). Then,
 
 > pip3 install ietf-comments
 
-## Use
 
-To validate a comments file and see the issues it contains, run:
+## Processing AD and Directorate Comments
+
+To validate a AD or Directorate review in the [IETF Comment Markdown format](#format) and see the identified issues, run:
 
 > ietf-comments _filename_
 
-To create a GitHub issue for each issue in the comments, set `GITHUB_ACCESS_TOKEN` in your environment to a [GitHub Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) and run:
+To create a GitHub issue for each issue, set `GITHUB_ACCESS_TOKEN` in your environment to a [GitHub Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) and run:
 
 > ietf-comments -g _owner/repo_ _filename_
 
@@ -29,6 +35,29 @@ To create a GitHub issue for each issue in the comments, set `GITHUB_ACCESS_TOKE
 If you'd like these issues to have a specific label, run:
 
 > ietf-comments -g _owner/repo_ _filename_ -l _labelname_
+
+
+## Processing RFC Editor Comments
+
+To validate RFC Editor comments in a local RFC XML file and see the identified issues, run:
+
+> rfced-comments _filename_
+
+Alternatively, if you're in AUTH48 and the RFC Editor has published a draft of your RFC-to-be, you can just run
+
+> rfced-comments _NNNN_
+
+where `NNNN` is the RFC number.
+
+To create a GitHub issue for each issue, set `GITHUB_ACCESS_TOKEN` in your environment to a [GitHub Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) and run:
+
+> rfced-comments -g _owner/repo_ _NNNN_or_filename_
+
+... where `owner/repo` is the repo owner and name, separated by a slash.
+
+If you'd like these issues to have a specific label, run:
+
+> rfced-comments -g _owner/repo_ _NNNN_or_filename_ -l _labelname_
 
 
 ## The IETF Comments Format
@@ -74,29 +103,7 @@ Note that:
 * The type can be 'discuss', 'comment', or 'nit' with any capitalisation
 * Each type header can occur exactly once in the document
 
+
 ### Issues
 
 Individual issues within a comment section can be identified with `h3` headers, as they are above. Alternatively, if a comment section does not have `h3` headers, the text in that section will be considered to be a single issue.
-
-Issue text can have the following features:
-
-### Change Proposals
-
-A change can be proposed by preceding two quoted sections with OLD and NEW; for example:
-
-~~~ markdown
-OLD
-
-> The foo header is a bar [HTTP].
-
-NEW
-
-> The foo header field is a bar [HTTP].
-~~~
-
-Note that the quoted text should be in the textual format, not XML or Markdown.
-
-
-#### Section Linking
-
-Within issue text, section links are automatically added. It is assumed that the bare words 'section' and 's' are followed by a section number to be referenced in the document (as in the example above).
