@@ -18,7 +18,7 @@ For IESG and directorate comments, this tool uses the [IETF Comment Markdown for
 
 ## Installation
 
-To install ietf-comments, you'll need [Python 3](https://www.python.org/). Then, run:
+To install ietf-comments, you'll need [Python 3.10](https://www.python.org/) or greater. Then, run:
 
 > pip3 install ietf-comments
 
