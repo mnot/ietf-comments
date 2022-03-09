@@ -19,7 +19,9 @@ class XmlCommentHandler(xml.sax.handler.LexicalHandler):
         if result:
             source = result.group(1)
             comment = result.group(2)
-            self.comments.append((source.lower(), comment))
+            title = extract_title(comment, "RFC Editor Comment")
+            if source == "rfced":
+                self.comments.append((title, comment))
 
 
 def parse_xml_comments(rfc, ui):
@@ -30,11 +32,7 @@ def parse_xml_comments(rfc, ui):
     handler = XmlCommentHandler()
     parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler)
     parser.parse(rfc)
-    return [
-        ("RFC Editor Comment", comment[1])
-        for comment in handler.comments
-        if comment[0] == "rfced"
-    ]
+    return handler.comments
 
 
 def fetch_rfcxml(rfcnum, ui):
@@ -45,3 +43,21 @@ def fetch_rfcxml(rfcnum, ui):
     if res.status_code != 200:
         ui.error(f"RFC{rfcnum}-to-be not found on RFC Editor server.")
     return res.text
+
+
+colon_title = re.compile(r"^([^:]{,70}):")
+question_title = re.compile(r"^([^?]{,70}\?)", re.MULTILINE)
+sentence_title = re.compile(r"^(.{,70})(?=\.\s+)", re.MULTILINE)
+
+
+def extract_title(text, default):
+    colon_result = colon_title.match(text)
+    if colon_result:
+        return colon_result.group(1).strip()
+    question_result = question_title.match(text)
+    if question_result:
+        return question_result.group(1).strip()
+    sentence_result = sentence_title.match(text)
+    if sentence_result:
+        return sentence_result.group(1).strip()
+    return default
