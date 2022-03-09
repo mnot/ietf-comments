@@ -69,7 +69,10 @@ def ietf_comments_cli():
     for issue_type in comments.sections:
         these_comments = comments.issues[issue_type]
         if args.github_repo:
-            labels = args.github_label or []
+            if args.auto_label:
+                labels = ["review", issue_type]
+            else:
+                labels = args.github_label or []
             create_issues(args.github_repo, cli, base, these_comments, labels)
         else:
             cli.out(f"\n{Fore.GREEN}# {issue_type}{Style.RESET_ALL}\n")
@@ -79,6 +82,14 @@ def ietf_comments_cli():
 
 def parse_ietf_args():
     parser = base_arg_parser("Process a markdown file containing IETF comments")
+    parser.add_argument(
+        "-a",
+        "--auto-label",
+        dest="auto_label",
+        action="store_true",
+        help="Add a 'review' label, and 'discuss', 'comment', or 'nit' as appropriate",
+    )
+
     parser.add_argument(
         "comment_file",
         metavar="filename",

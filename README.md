@@ -41,6 +41,11 @@ If you'd like these issues to have a specific label, run:
 
 > ietf-comments -g _owner/repo_ _filename_ -l _labelname_
 
+If you'd like `discuss`, `comment`, and `nit labels` added as appropriate, along with a `review` label, pass `-a`:
+
+> ietf-comments -g _owner/repo_ _filename_ -a
+
+
 
 ### Processing RFC Editor Comments
 
@@ -63,6 +68,8 @@ To create a GitHub issue for each issue, set `GITHUB_ACCESS_TOKEN` in your envir
 If you'd like these issues to have a specific label, run:
 
 > rfced-comments -g _owner/repo_ _NNNN_or_filename_ -l _labelname_
+
+
 
 
 ## Special Features
