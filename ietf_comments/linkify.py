@@ -9,7 +9,7 @@ section_finder = re.compile(
     \[(?P<comma_ref>{ref})\],\s*
 )?
 (?P<section>(?:section|sections|appendix|§)\s+)
-(?P<num>[\d\.]+)\.?
+(?P<num>[\d\.]*\d)\.?
 (?:
     \s+of\s+\[(?P<of_ref>{ref})\]
 )?
@@ -53,6 +53,7 @@ def find_ref_uri(ref):
 
 if __name__ == "__main__":
     print(linkify("in section 4.3 of that", "https://www.example.com/"))
+    print(linkify("in section 4.3. of that", "https://www.example.com/"))
     print(linkify("in [RFC3221], section 4.3 of that", "https://www.example.com/"))
     print(linkify("in Section  4.3 of [RFC2119]", "https://www.example.com/"))
     print(linkify("in section 4.3 of [OTHER_THING]", "https://www.example.com/"))
