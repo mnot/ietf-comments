@@ -1,40 +1,62 @@
-SECTION_MARKERS = {
-    "section": "section",
-    "sections": "section",
-    "s": "section",
-    "§": "section",
-    "appendix": "appendix",
-}
+import re
+
+
+flags = re.IGNORECASE | re.MULTILINE | re.VERBOSE
+ref = r"[a-zA-Z0-9\-_]+"
+section_finder = re.compile(
+    rf"""
+(?:
+    \[(?P<comma_ref>{ref})\],\s*
+)?
+(?P<section>(?:section|sections|appendix|§)\s+)
+(?P<num>[\d\.]+)\.?
+(?:
+    \s+of\s+\[(?P<of_ref>{ref})\]
+)?
+""",
+    flags,
+)
 
 
 def linkify(text, spec_uri):
-    in_link = False
-    text_out = []
-    for line in text.split("\n"):
-        line_out = []
-        link_word = None
-        for word in line.split(" "):
-            if link_word is not None:
-                section_id = word
-                rest = ""
-                extra_chars = 0
-                try:
-                    while not section_id[-1].isnumeric():
-                        extra_chars += 1
-                        section_id = word[:-extra_chars]
-                        rest = word[-extra_chars]
-                except IndexError:
-                    line_out.append(f"{link_word} {word}")
-                    link_word = None
-                    continue
-                frag_base = SECTION_MARKERS[link_word.lower().strip()]
-                line_out.append(
-                    f"[{link_word} {section_id}]({spec_uri}#{frag_base}-{section_id}){rest}"
-                )
-                link_word = None
-            elif word.lower().strip() in SECTION_MARKERS:
-                link_word = word
+    def linker(matchobj):
+        section = matchobj.group("section")
+        if section.lower().strip() == "appendix":
+            sref = "appendix"
+        else:
+            sref = "section"
+        num = matchobj.group("num")
+        if matchobj.group("comma_ref"):
+            ref = matchobj.group("comma_ref")
+            link = find_ref_uri(ref)
+            if link:
+                return f"[{ref}]({link}), [{section}{num}]({link}#{sref}-{num})"
             else:
-                line_out.append(word)
-        text_out.append(" ".join(line_out))
-    return "\n".join(text_out)
+                return f"[{ref}], {section}{num}"
+        elif matchobj.group("of_ref"):
+            ref = matchobj.group("of_ref")
+            link = find_ref_uri(ref)
+            if link:
+                return f"[{section}{num}]({link}#{sref}-{num}) of [{ref}]({link})"
+            else:
+                return f"{section}{num} of [{ref}]"
+        else:
+            return f"[{section}{num}]({spec_uri}#{sref}-{num})"
+
+    return section_finder.sub(linker, text)
+
+
+def find_ref_uri(ref):
+    if ref[:3].lower() == "rfc" and ref[3:].isnumeric():
+        return f"https://rfc-editor.org/rfc/rfc{ref[3:]}.html"
+
+
+if __name__ == "__main__":
+    print(linkify("in section 4.3 of that", "https://www.example.com/"))
+    print(linkify("in [RFC3221], section 4.3 of that", "https://www.example.com/"))
+    print(linkify("in Section  4.3 of [RFC2119]", "https://www.example.com/"))
+    print(linkify("in section 4.3 of [OTHER_THING]", "https://www.example.com/"))
+    print(linkify("in appendix 4.3 of [RFC1234]", "https://www.example.com/"))
+    print(linkify("in section 4.3a of [OTHER_THING]", "https://www.example.com/"))
+    print(linkify("in section 4a.3a of [OTHER_THING]", "https://www.example.com/"))
+    print(linkify("in section a.3a of [OTHER_THING]", "https://www.example.com/"))
