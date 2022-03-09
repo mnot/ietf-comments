@@ -1,14 +1,12 @@
-from colorama import Fore, Style
 import commonmark
 from commonmark.render.renderer import Renderer
 
-from .changes import DocChanges
+from ietf_comments.changes import DocChanges
 
 
 class CommentRenderer(Renderer):
     sections = ["discuss", "comment", "nit"]
     section_map = {"discusses": "discuss", "comments": "comment", "nits": "nit"}
-    section_markers = ["section", "sections", "s", "§"]
     BLOCK = "block"
 
     def __init__(self, ui, options={}):
@@ -36,7 +34,7 @@ class CommentRenderer(Renderer):
             self._context_buffer.append(" ")
 
     def get_buffer(self):
-        content = self.link_sections("".join(self._buffer))
+        content = "".join(self._buffer)
         self._buffer = []
         return content
 
@@ -130,57 +128,6 @@ class CommentRenderer(Renderer):
                 self.issues[self._section].append((self._current_issue, text))
         self._current_issue = None
         self._buffer = []
-
-    def __str__(self):
-        out = []
-        out.append(f"{self.title}")
-        out.append(f"Document: {self.doc}")
-        out.append(f"Revision: {self.revision}")
-        out.append("")
-        out.append(f"{Fore.GREEN}# Discusses{Style.RESET_ALL}")
-        for discuss in self.issues["discuss"]:
-            out.append(f"{Fore.BLUE}## {discuss[0]}{Style.RESET_ALL}")
-            out.append(f"{discuss[1]}")
-            out.append("")
-        out.append(f"{Fore.GREEN}# Comments{Style.RESET_ALL}")
-        for comment in self.issues["comment"]:
-            out.append(f"{Fore.BLUE}## {comment[0]}{Style.RESET_ALL}")
-            out.append(f"{comment[1]}")
-            out.append("")
-        out.append(f"{Fore.GREEN}# Nits{Style.RESET_ALL}")
-        for nit in self.issues["nit"]:
-            out.append(f"{Fore.BLUE}## {nit[0]}{Style.RESET_ALL}")
-            out.append(f"{nit[1]}")
-            out.append("")
-        return "\n".join(out)
-
-    def link_sections(self, text):
-        base = f"https://www.ietf.org/archive/id/{self.doc}-{self.revision}.html"
-        in_link = False
-        text_out = []
-        for line in text.split("\n"):
-            line_out = []
-            for word in line.split(" "):
-                if in_link:
-                    section_id = word
-                    rest = ""
-                    extra_chars = 0
-                    try:
-                        while not section_id[-1].isnumeric():
-                            extra_chars += 1
-                            section_id = word[:-extra_chars]
-                            rest = word[-extra_chars]
-                    except IndexError:
-                        self.ui.warn(f"Section ID '{word}' isn't numeric.")
-                    line_out.append(f"{section_id}]({base}#section-{section_id}){rest}")
-                    in_link = False
-                elif word.lower().strip() in self.section_markers:
-                    line_out.append(f"[{word}")
-                    in_link = True
-                else:
-                    line_out.append(word)
-            text_out.append(" ".join(line_out))
-        return "\n".join(text_out)
 
 
 def parse_markdown_comments(fd, ui):

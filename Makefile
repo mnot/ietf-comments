@@ -3,9 +3,24 @@ PROJECT=ietf_comments
 #############################################################################
 ## Tasks
 
-.PHONY: run
-test: venv
-	PYTHONPATH=$(VENV):. $(VENV)/python bin/ietf-comments examples/ad_comments.md
+.PHONY: test
+test: test-ietf test-rfced
+
+.PHONY: test-ietf
+test-ietf: venv
+	PYTHONPATH=$(VENV) $(VENV)/pip install .
+	PYTHONPATH=$(VENV):. $(VENV)/ietf-comments examples/ad_comments.md
+
+.PHONY: test-rfced
+test-rfced: venv
+	PYTHONPATH=$(VENV) $(VENV)/pip install .
+	PYTHONPATH=$(VENV):. $(VENV)/rfced-comments ./examples/rfced_comments.xml
+
+.PHONY: cli
+cli: venv
+	PYTHONPATH=$(VENV) $(VENV)/pip install .
+	PYTHONPATH=$(VENV):. sh
+
 
 .PHONY: clean
 clean:
@@ -14,12 +29,11 @@ clean:
 
 .PHONY: tidy
 tidy: venv
-	$(VENV)/black $(PROJECT) bin/*
+	$(VENV)/black $(PROJECT)
 
 .PHONY: lint
 lint: venv
-	PYTHONPATH=$(VENV) $(VENV)/pylint --output-format=colorized \
-	  $(PROJECT) bin/*
+	PYTHONPATH=$(VENV) $(VENV)/pylint --output-format=colorized $(PROJECT)
 
 
 #############################################################################

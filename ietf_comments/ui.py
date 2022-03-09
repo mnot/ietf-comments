@@ -1,6 +1,12 @@
+import argparse
 import sys
 
-from colorama import Fore, Back, Style
+from ietf_comments import __version__
+from ietf_comments.md_comments import parse_markdown_comments
+from ietf_comments.xml_comments import parse_xml_comments
+from ietf_comments.github import create_issues
+
+from colorama import Fore, Style
 
 
 class Cli:
@@ -20,3 +26,90 @@ class Cli:
     def error(cls, message):
         sys.stderr.write(f"{Fore.RED}Error{Style.RESET_ALL}: {message}\n")
         sys.exit(1)
+
+    def comment(self, comment):
+        self.out(f"{Fore.BLUE}## {comment[0]}{Style.RESET_ALL}\n")
+        self.out(f"{comment[1]}\n")
+        self.out("\n")
+
+
+def base_arg_parser(description):
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument(
+        "-g",
+        "--github_repo",
+        metavar="owner/repo",
+        dest="github_repo",
+        help="create issues in the named repo",
+    )
+
+    parser.add_argument(
+        "-l",
+        "--github-label",
+        dest="github_label",
+        action="append",
+        help="label to assign to created GitHub issues",
+    )
+
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=f"{__version__}",
+        help="print version and exit",
+    )
+    return parser
+
+
+def ietf_comments_cli():
+    args = parse_ietf_args()
+    cli = Cli()
+    comments = parse_markdown_comments(args.comment_file, cli)
+    base = f"https://www.ietf.org/archive/id/{comments.doc}-{comments.revision}.html"
+    for issue_type in comments.sections:
+        these_comments = comments.issues[issue_type]
+        if args.github_repo:
+            labels = args.github_label or []
+            create_issues(args.github_repo, cli, base, these_comments, labels)
+        else:
+            cli.out(f"\n{Fore.GREEN}# {issue_type}{Style.RESET_ALL}\n")
+            for comment in these_comments:
+                cli.comment(comment)
+
+
+def parse_ietf_args():
+    parser = base_arg_parser("Process a markdown file containing IETF comments")
+    parser.add_argument(
+        "comment_file",
+        metavar="filename",
+        type=argparse.FileType("r"),
+        help="comment file to process",
+    )
+    return parser.parse_args()
+
+
+def rfced_comments_cli():
+    args = parse_rfced_args()
+    cli = Cli()
+    comments = parse_xml_comments(args.rfc, cli)
+    if args.rfc.isnumeric():
+        rfcnum = args.rfc
+    else:
+        rfcnum = "NNNN"
+    if args.github_repo:
+        labels = args.github_label or []
+        base = f"https://www.rfc-editor.org/authors/rfc{rfcnum}.html"
+        create_issues(args.github_repo, cli, base, comments, labels)
+    else:
+        for comment in comments:
+            cli.comment(comment)
+
+
+def parse_rfced_args():
+    parser = base_arg_parser("Process an AUTH48 draft for RFC Editor comments")
+    parser.add_argument(
+        "rfc",
+        metavar="NNNN",
+        help="RFC-to-be number or filename to process",
+    )
+    return parser.parse_args()

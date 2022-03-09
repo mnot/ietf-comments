@@ -1,7 +1,5 @@
 import requests
 
-from ietf_comments.ui import Cli
-
 
 class DocChanges:
     URL_BASE = "https://www.ietf.org/archive/id/"
@@ -50,11 +48,3 @@ class DocChanges:
                         return line_no - lines_consumed, lines_consumed + 1
                 if line_words_consumed + start_word == line_word_count:
                     lines_consumed += 1
-
-
-if __name__ == "__main__":
-    import sys
-
-    ui = Cli()
-    d = DocChanges(sys.argv[1], sys.argv[2], ui)
-    print(d.find_change_line(sys.argv[3]))
