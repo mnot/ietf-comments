@@ -8,7 +8,9 @@ The IETF Comment Markdown Format is a [markdown](https://commonmark.org) dialect
 
 See the [examples directory](https://github.com/mnot/ietf-comments/tree/main/examples) for examples of the format in use.
 
-This page summarises the format for reviewers.
+This page summarises the format for reviewers. Reviewers can validate a document using the command-line tool; e.g.,
+
+> ./ietf-comments _filename_
 
 ## Document Header
 
