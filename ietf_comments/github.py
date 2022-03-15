@@ -1,6 +1,6 @@
 import os
 
-from github import Github
+from github import Github, GithubException
 from github.GithubException import UnknownObjectException
 
 from .linkify import linkify
@@ -15,8 +15,11 @@ class GithubRepo:
             ui.error(
                 "GITHUB_ACCESS_TOKEN not set. See: <https://github.com/settings/tokens>"
             )
-        g = Github(token)
-        self.repo = g.get_repo(reponame)
+        try:
+            g = Github(token)
+            self.repo = g.get_repo(reponame)
+        except GithubException as err:
+            ui.error(err.data['message'])
 
     def create_issue(self, title, content, labels, cc):
         _labels = []
