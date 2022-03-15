@@ -1,10 +1,10 @@
 import argparse
 import sys
 
-from ietf_comments import __version__
-from ietf_comments.md_comments import parse_markdown_comments
-from ietf_comments.xml_comments import parse_xml_comments
-from ietf_comments.github import create_issues
+from . import __version__
+from .md_comments import parse_markdown_comments
+from .xml_comments import parse_xml_comments
+from .github import create_issues
 
 from colorama import Fore, Style
 
@@ -15,8 +15,8 @@ class Cli:
         sys.stdout.write(content)
 
     @classmethod
-    def status(cls, message):
-        sys.stderr.write(f"{message}\n")
+    def status(cls, name, value):
+        sys.stderr.write(f"{Fore.GREEN}{name}:{Style.RESET_ALL} {value}\n")
 
     @classmethod
     def warn(cls, message):
@@ -66,6 +66,10 @@ def ietf_comments_cli():
     cli = Cli()
     comments = parse_markdown_comments(args.comment_file, cli)
     base = f"https://www.ietf.org/archive/id/{comments.doc}-{comments.revision}.html"
+    cli.status(f"Document", comments.doc)
+    cli.status(f"Revision", comments.revision)
+    if comments.cc:
+        cli.status(f"CC", f"@{comments.cc}")
     for issue_type in comments.sections:
         these_comments = comments.issues[issue_type]
         if args.github_repo:
@@ -73,7 +77,9 @@ def ietf_comments_cli():
                 labels = ["review", issue_type]
             else:
                 labels = args.github_label or []
-            create_issues(args.github_repo, cli, base, these_comments, labels)
+            create_issues(
+                args.github_repo, cli, base, these_comments, labels, comments.cc
+            )
         else:
             cli.out(f"\n{Fore.GREEN}# {issue_type}{Style.RESET_ALL}\n")
             for comment in these_comments:

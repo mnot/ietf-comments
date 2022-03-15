@@ -28,6 +28,12 @@ It must:
 * Identify the reviewer, either by name or position
 * Identify the draft being reviewed by its _with_ revision number
 
+Optionally, a reviewer can indicate that they want their GitHub username to be `@` mentioned in any issues created by adding a line after the `h1` header that starts with `CC`, followed by their GitHub username; for example:
+
+~~~ markdown
+CC @mnot
+~~~
+
 
 ## Review Comments
 

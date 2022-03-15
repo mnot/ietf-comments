@@ -1,7 +1,7 @@
 import commonmark
 from commonmark.render.renderer import Renderer
 
-from ietf_comments.changes import DocChanges
+from .changes import DocChanges
 
 
 class CommentRenderer(Renderer):
@@ -20,6 +20,7 @@ class CommentRenderer(Renderer):
         self.title = None
         self.doc = None
         self.revision = None
+        self.cc = None
         self.changes = None
         self.issues = {"discuss": [], "comment": [], "nit": []}
 
@@ -126,8 +127,18 @@ class CommentRenderer(Renderer):
             text = self.get_buffer()
             if text:
                 self.issues[self._section].append((self._current_issue, text))
+        else:
+            self.process_preface()
         self._current_issue = None
         self._buffer = []
+
+    def process_preface(self):
+        text = self.get_buffer()
+        if text:
+            for line in text.split("\n"):
+                if line.lstrip().lower().startswith("cc @"):
+                    self.cc = line.strip().split("@", 1)[1]
+                    break
 
 
 def parse_markdown_comments(fd, ui):
