@@ -8,8 +8,9 @@ The IETF Comment Markdown Format is a [markdown](https://commonmark.org) dialect
 
 See the [examples directory](https://github.com/mnot/ietf-comments/tree/main/examples) for examples of the format in use.
 
+This page summarises the format for reviewers.
 
-## Required Header
+## Document Header
 
 The document should start with a header indicating the title of the review; for example:
 
@@ -26,7 +27,11 @@ It must:
 
 ## Review Comments
 
-Then, the document can contain `discuss`, `comment`, and `nit` positions, each in their own subsection indicated by a `h2` header. For example:
+Then, the document can contain `discuss`, `comment`, and `nit` positions, each in their own subsection indicated by a `h2` header. Issues within a section should each have a descriptive title in a `h3` header (i.e., two octothorps); if there are no `h3` headers, the entire section will be considered a single issue.
+
+Comments can contain any markdown, including blockquotes, links, emphasis, lists, etc.
+
+For example:
 
 ~~~ markdown
 ## Discuss
@@ -59,7 +64,5 @@ The following pages are missing:
 
 ~~~
 
-Issues within a section should each have a descriptive title in a `h3` header (i.e., two octothorps); if there are no `h3` headers, the entire section will be considered a single issue.
 
-Comments can contain any markdown, including blockquotes, links, emphasis, lists, etc.
 
