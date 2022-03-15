@@ -10,7 +10,9 @@ See the [examples directory](https://github.com/mnot/ietf-comments/tree/main/exa
 
 This page summarises the format for reviewers. Reviewers can validate a document using the command-line tool; e.g.,
 
+~~~ shell
 > ./ietf-comments _filename_
+~~~
 
 ## Document Header
 
