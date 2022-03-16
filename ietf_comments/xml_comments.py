@@ -1,6 +1,7 @@
 import re
 from io import StringIO
 import os
+import textwrap
 import xml.sax
 
 import requests
@@ -18,7 +19,7 @@ class XmlCommentHandler(xml.sax.handler.LexicalHandler):
         result = self.source_regex.match(content)
         if result:
             source = result.group(1)
-            comment = result.group(2)
+            comment = fix_blockquotes(result.group(2))
             title = extract_title(comment, "RFC Editor Comment")
             if source == "rfced":
                 self.comments.append((title, comment))
@@ -61,3 +62,17 @@ def extract_title(text, default):
     if sentence_result:
         return sentence_result.group(1).strip()
     return default
+
+
+quoted_start = re.compile(
+    r"(Currently|Original|Suggested|Possibly):\s*\n(\s+.*?)(\n\n|$)", re.DOTALL
+)
+
+
+def blockquote_indent(match):
+    indented = textwrap.indent(match.group(2), "    ", lambda line: True)
+    return f"{match.group(1)}:\n\n{indented}{match.group(3)}"
+
+
+def fix_blockquotes(text):
+    return quoted_start.sub(blockquote_indent, text)

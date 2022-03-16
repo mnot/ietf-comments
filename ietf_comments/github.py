@@ -19,7 +19,7 @@ class GithubRepo:
             g = Github(token)
             self.repo = g.get_repo(reponame)
         except GithubException as err:
-            ui.error(err.data['message'])
+            ui.error(err.data["message"])
 
     def create_issue(self, title, content, labels, cc):
         _labels = []
