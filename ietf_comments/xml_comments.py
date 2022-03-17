@@ -11,6 +11,12 @@ class XmlCommentHandler(xml.sax.handler.LexicalHandler):
     source_regex = re.compile(
         r"^\s*\[\s*([a-zA-z0-9\-]+)\s*\]\s*(.+)", flags=re.MULTILINE | re.DOTALL
     )
+    colon_title = re.compile(r"^([^:]{,70}):")
+    question_title = re.compile(r"^([^?]{,70}\?)", re.MULTILINE)
+    sentence_title = re.compile(r"^(.{,70})(?=\.\s+)", re.MULTILINE)
+    quoted_start = re.compile(
+        r"(Currently|Original|Suggested|Possibly):\s*\n(\s+.*?)(\n\n|$)", re.DOTALL
+    )
 
     def __init__(self):
         self.comments = []
@@ -19,10 +25,31 @@ class XmlCommentHandler(xml.sax.handler.LexicalHandler):
         result = self.source_regex.match(content)
         if result:
             source = result.group(1)
-            comment = fix_blockquotes(result.group(2))
-            title = extract_title(comment, "RFC Editor Comment")
             if source == "rfced":
+                raw_comment = result.group(2)
+                title = self.extract_title(raw_comment, "RFC Editor Comment")
+                comment = self.process_comment(raw_comment)
                 self.comments.append((title, comment))
+
+    def extract_title(self, text, default):
+        colon_result = self.colon_title.match(text)
+        if colon_result:
+            return colon_result.group(1).strip()
+        question_result = self.question_title.match(text)
+        if question_result:
+            return question_result.group(1).strip()
+        sentence_result = self.sentence_title.match(text)
+        if sentence_result:
+            return sentence_result.group(1).strip()
+        return default
+
+    def process_comment(self, text):
+        return self.quoted_start.sub(self.blockquote_indent, text)
+
+    @classmethod
+    def blockquote_indent(cls, match):
+        indented = textwrap.indent(match.group(2), "    ", lambda line: True)
+        return f"{match.group(1)}:\n\n{indented}{match.group(3)}"
 
 
 def parse_xml_comments(rfc, ui):
@@ -44,35 +71,3 @@ def fetch_rfcxml(rfcnum, ui):
     if res.status_code != 200:
         ui.error(f"RFC{rfcnum}-to-be not found on RFC Editor server.")
     return res.text
-
-
-colon_title = re.compile(r"^([^:]{,70}):")
-question_title = re.compile(r"^([^?]{,70}\?)", re.MULTILINE)
-sentence_title = re.compile(r"^(.{,70})(?=\.\s+)", re.MULTILINE)
-
-
-def extract_title(text, default):
-    colon_result = colon_title.match(text)
-    if colon_result:
-        return colon_result.group(1).strip()
-    question_result = question_title.match(text)
-    if question_result:
-        return question_result.group(1).strip()
-    sentence_result = sentence_title.match(text)
-    if sentence_result:
-        return sentence_result.group(1).strip()
-    return default
-
-
-quoted_start = re.compile(
-    r"(Currently|Original|Suggested|Possibly):\s*\n(\s+.*?)(\n\n|$)", re.DOTALL
-)
-
-
-def blockquote_indent(match):
-    indented = textwrap.indent(match.group(2), "    ", lambda line: True)
-    return f"{match.group(1)}:\n\n{indented}{match.group(3)}"
-
-
-def fix_blockquotes(text):
-    return quoted_start.sub(blockquote_indent, text)
