@@ -7,6 +7,17 @@ import xml.sax
 import requests
 
 
+def parse_xml_comments(rfc, ui):
+    if not os.path.isfile(rfc):
+        rfcxml = fetch_rfcxml(rfc, ui)
+        rfc = StringIO(rfcxml)
+    parser = xml.sax.make_parser()
+    handler = XmlCommentHandler()
+    parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler)
+    parser.parse(rfc)
+    return handler.comments
+
+
 class XmlCommentHandler(xml.sax.handler.LexicalHandler):
     source_regex = re.compile(
         r"^\s*\[\s*([a-zA-z0-9\-]+)\s*\]\s*(.+)", flags=re.MULTILINE | re.DOTALL
@@ -50,17 +61,6 @@ class XmlCommentHandler(xml.sax.handler.LexicalHandler):
     def blockquote_indent(cls, match):
         indented = textwrap.indent(match.group(2), "    ", lambda line: True)
         return f"{match.group(1)}:\n\n{indented}{match.group(3)}"
-
-
-def parse_xml_comments(rfc, ui):
-    if not os.path.isfile(rfc):
-        rfcxml = fetch_rfcxml(rfc, ui)
-        rfc = StringIO(rfcxml)
-    parser = xml.sax.make_parser()
-    handler = XmlCommentHandler()
-    parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler)
-    parser.parse(rfc)
-    return handler.comments
 
 
 def fetch_rfcxml(rfcnum, ui):
