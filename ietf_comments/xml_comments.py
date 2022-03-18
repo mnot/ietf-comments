@@ -38,24 +38,27 @@ class XmlCommentHandler(xml.sax.handler.LexicalHandler):
             source = result.group(1)
             if source == "rfced":
                 raw_comment = result.group(2)
-                title = self.extract_title(raw_comment, "RFC Editor Comment")
+                title = self.extract_title(raw_comment)
                 comment = self.process_comment(raw_comment)
                 self.comments.append((title, comment))
 
-    def extract_title(self, text, default):
+    def extract_title(self, text):
         colon_result = self.colon_title.match(text)
+        comment_num = len(self.comments) + 1
+        comment_counter = f" (comment {comment_num})"
         if colon_result:
-            return colon_result.group(1).strip()
+            return colon_result.group(1).strip() + comment_counter
         question_result = self.question_title.match(text)
         if question_result:
-            return question_result.group(1).strip()
+            return question_result.group(1).strip() + comment_counter
         sentence_result = self.sentence_title.match(text)
         if sentence_result:
-            return sentence_result.group(1).strip()
-        return default
+            return sentence_result.group(1).strip() + comment_counter
+        return f"RFC Editor comment {comment_num}"
 
     def process_comment(self, text):
-        return self.quoted_start.sub(self.blockquote_indent, text)
+        adjusted = self.quoted_start.sub(self.blockquote_indent, text)
+        return adjusted
 
     @classmethod
     def blockquote_indent(cls, match):
