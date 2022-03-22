@@ -131,7 +131,7 @@ def rfced_comments_cli():
     if args.github_repo:
         labels = args.github_label or []
         base = f"https://www.rfc-editor.org/authors/rfc{rfcnum}.html"
-        create_issues(args.github_repo, cli, base, comments, labels, args.start_num)
+        create_issues(args.github_repo, cli, base, comments, labels, start_num=args.start_num)
     else:
         for comment in comments:
             cli.comment(comment)
