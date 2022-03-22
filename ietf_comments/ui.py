@@ -52,6 +52,16 @@ def base_arg_parser(description):
     )
 
     parser.add_argument(
+        "-s",
+        "--start",
+        dest="start_num",
+        type=int,
+        metavar="NN",
+        default=None,
+        help="Comment number to skip to when creating issues",
+    )
+
+    parser.add_argument(
         "-v",
         "--version",
         action="version",
@@ -78,7 +88,13 @@ def ietf_comments_cli():
             else:
                 labels = args.github_label or []
             create_issues(
-                args.github_repo, cli, base, these_comments, labels, comments.cc
+                args.github_repo,
+                cli,
+                base,
+                these_comments,
+                labels,
+                comments.cc,
+                args.start_num,
             )
         else:
             cli.out(f"\n{Fore.GREEN}# {issue_type}{Style.RESET_ALL}\n")
@@ -95,7 +111,6 @@ def parse_ietf_args():
         action="store_true",
         help="Add a 'review' label, and 'discuss', 'comment', or 'nit' as appropriate",
     )
-
     parser.add_argument(
         "comment_file",
         metavar="filename",
@@ -116,7 +131,7 @@ def rfced_comments_cli():
     if args.github_repo:
         labels = args.github_label or []
         base = f"https://www.rfc-editor.org/authors/rfc{rfcnum}.html"
-        create_issues(args.github_repo, cli, base, comments, labels)
+        create_issues(args.github_repo, cli, base, comments, labels, args.start_num)
     else:
         for comment in comments:
             cli.comment(comment)

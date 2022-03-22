@@ -35,12 +35,17 @@ class GithubRepo:
         return issue.number
 
 
-def create_issues(reponame, ui, base, comments, labels, cc=None):
+def create_issues(reponame, ui, base, comments, labels, cc=None, start_num=None):
     repo = GithubRepo(reponame, ui)
     if labels is None:
         labels = []
-    for comment in comments:
+    for num, comment in enumerate(comments, start=1):
+        if start_num and num < start_num:
+            continue
         title = f"{comment[0]}"
         content = linkify(comment[1], base)
-        number = repo.create_issue(title, content, labels, cc)
+        try:
+            number = repo.create_issue(title, content, labels, cc)
+        except GithubException as err:
+            ui.error(f"{err.data['message']} - restart with --start={num}")
         ui.status(f"* Created issue {number} in {reponame}", f"{title}")
