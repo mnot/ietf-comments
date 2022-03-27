@@ -31,7 +31,9 @@ class GithubRepo:
             _labels.append(label)
         if cc:
             content = f"_Comment by @{cc}_\n\n{content}"
-        issue = self.repo.create_issue(title=normalise_ws(title), body=content, labels=_labels)
+        issue = self.repo.create_issue(
+            title=normalise_ws(title), body=content, labels=_labels
+        )
         return issue.number
 
 
@@ -47,7 +49,10 @@ def create_issues(reponame, ui, base, comments, labels, cc=None, start_num=None)
         try:
             number = repo.create_issue(title, content, labels, cc)
         except GithubException as err:
-            ui.error(f"{err.data['message']} - restart with --start={num}", "Github Issue Creation")
+            ui.error(
+                f"{err.data['message']} - restart with --start={num}",
+                "Github Issue Creation",
+            )
         ui.status(f"* Created issue {number} in {reponame}", f"{title}")
 
 
