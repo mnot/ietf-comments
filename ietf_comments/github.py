@@ -19,7 +19,7 @@ class GithubRepo:
             g = Github(token)
             self.repo = g.get_repo(reponame)
         except GithubException as err:
-            ui.error(err.data["message"])
+            ui.error(err.data["message"], "GitHub Repo")
 
     def create_issue(self, title, content, labels, cc):
         _labels = []
@@ -47,7 +47,7 @@ def create_issues(reponame, ui, base, comments, labels, cc=None, start_num=None)
         try:
             number = repo.create_issue(title, content, labels, cc)
         except GithubException as err:
-            ui.error(f"{err.data['message']} - restart with --start={num}")
+            ui.error(f"{err.data['message']} - restart with --start={num}", "Github Issue Creation")
         ui.status(f"* Created issue {number} in {reponame}", f"{title}")
 
 

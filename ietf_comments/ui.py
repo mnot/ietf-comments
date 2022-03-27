@@ -19,12 +19,16 @@ class Cli:
         sys.stderr.write(f"{Fore.GREEN}{name}:{Style.RESET_ALL} {value}\n")
 
     @classmethod
-    def warn(cls, message):
-        sys.stderr.write(f"{Fore.YELLOW}Warning{Style.RESET_ALL}: {message}\n")
+    def warn(cls, message, source=""):
+        if source:
+            source = f"{source} "
+        sys.stderr.write(f"{Fore.YELLOW}{source}Warning{Style.RESET_ALL}: {message}\n")
 
     @classmethod
-    def error(cls, message):
-        sys.stderr.write(f"{Fore.RED}Error{Style.RESET_ALL}: {message}\n")
+    def error(cls, message, source=""):
+        if source:
+            source = f"{source} "
+        sys.stderr.write(f"{Fore.RED}{source}Error{Style.RESET_ALL}: {message}\n")
         sys.exit(1)
 
     def comment(self, comment):
