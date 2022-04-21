@@ -34,6 +34,7 @@ Optionally, a reviewer can indicate that they want their GitHub username to be `
 CC @mnot
 ~~~
 
+This first part can contain other content (e.g., acknowledgements, a preface, etc.) that will not be converted into issues.
 
 ## Review Comments
 
