@@ -82,6 +82,9 @@ class CommentRenderer(Renderer):
     def handle_h3(self, content):
         self._current_issue = content
 
+    def handle_h4(self, content):
+        self.ui.error("h4 headers aren't used in this format.")
+
     def item(self, node, entering):
         if entering:
             self._buffer.append("* ")
