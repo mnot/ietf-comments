@@ -40,11 +40,17 @@ class CommentRenderer(Renderer):
         return content
 
     def heading(self, node, entering):
-        if entering:
-            self.cleanup()
+        if node.level < 4:
+            if entering:
+                self.cleanup()
+            else:
+                content = self.get_buffer()
+                getattr(self, f"handle_h{node.level}")(content.lower())
         else:
-            content = self.get_buffer().lower()
-            getattr(self, f"handle_h{node.level}")(content)
+            if entering:
+                self._buffer.append(f"{'#' * (node.level - 1)} ")
+            else:
+                self._buffer.append("\n\n")
 
     def handle_h1(self, content):
         if self.doc is not None:
@@ -81,9 +87,6 @@ class CommentRenderer(Renderer):
 
     def handle_h3(self, content):
         self._current_issue = content
-
-    def handle_h4(self, content):
-        self.ui.error("h4 headers aren't used in this format.")
 
     def item(self, node, entering):
         if entering:
