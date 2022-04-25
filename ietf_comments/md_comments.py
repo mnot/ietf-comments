@@ -24,20 +24,53 @@ class CommentRenderer(Renderer):
         self.changes = None
         self.issues = {"discuss": [], "comment": [], "nit": []}
 
-    def text(self, node, entering=None):
-        self._buffer.append(node.literal)
-        if self._context is not None:
-            self._context_buffer.append(node.literal)
+    def document(self, node, entering):
+        if not entering:
+            self.cleanup()
+            if sum([len(l) for l in self.issues.values()]) == 0:
+                self.ui.warn("Did not find any issues.")
 
     def softbreak(self, node, entering=None):
         self._buffer.append(" ")
         if self._context_buffer:
             self._context_buffer.append(" ")
 
-    def get_buffer(self):
-        content = "".join(self._buffer)
-        self._buffer = []
-        return content
+    def text(self, node, entering=None):
+        self._buffer.append(node.literal)
+        if self._context is not None:
+            self._context_buffer.append(node.literal)
+
+    def emph(self, node, entering):
+        self._buffer.append("_")
+
+    def strong(self, node, entering):
+        self._buffer.append("**")
+
+    def paragraph(self, node, entering):
+        if not entering:
+            self._buffer.append("\n\n")
+
+    def link(self, node, entering):
+        if entering:
+            self._buffer.append("[")
+        else:
+            self._buffer.append(f"]({node.destination})")
+
+    def item(self, node, entering):
+        if entering:
+            self._buffer.append("* ")
+
+    def block_quote(self, node, entering):
+        if entering:
+            self._buffer.append("> ")
+            self._context = self.BLOCK
+        else:
+            self._context = None
+            content = "".join(self._context_buffer)
+            self._context_buffer = []
+            change_location = self.changes.find_change_line(content)
+            if change_location is None:
+                self.ui.warn(f"Can't find quoted text in document: {content}")
 
     def heading(self, node, entering):
         if node.level < 4:
@@ -88,43 +121,10 @@ class CommentRenderer(Renderer):
     def handle_h3(self, content):
         self._current_issue = content
 
-    def item(self, node, entering):
-        if entering:
-            self._buffer.append("* ")
-
-    def paragraph(self, node, entering):
-        if not entering:
-            self._buffer.append("\n\n")
-
-    def block_quote(self, node, entering):
-        if entering:
-            self._buffer.append("> ")
-            self._context = self.BLOCK
-        else:
-            self._context = None
-            content = "".join(self._context_buffer)
-            self._context_buffer = []
-            change_location = self.changes.find_change_line(content)
-            if change_location is None:
-                self.ui.warn(f"Can't find quoted text in document: {content}")
-
-    def emph(self, node, entering):
-        self._buffer.append("_")
-
-    def strong(self, node, entering):
-        self._buffer.append("**")
-
-    def link(self, node, entering):
-        if entering:
-            self._buffer.append("[")
-        else:
-            self._buffer.append(f"]({node.destination})")
-
-    def document(self, node, entering):
-        if not entering:
-            self.cleanup()
-            if sum([len(l) for l in self.issues.values()]) == 0:
-                self.ui.warn("Did not find any issues.")
+    def get_buffer(self):
+        content = "".join(self._buffer)
+        self._buffer = []
+        return content
 
     def cleanup(self):
         if self._section:
