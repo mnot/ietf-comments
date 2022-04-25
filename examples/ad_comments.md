@@ -12,7 +12,7 @@ Section 2 , paragraph 12, comment:
 >    preserve the existing members of the field to allow debugging of the
 >    entire chain of intermediaries handling the request,
 
-I'm surprised this is not a MUST? Are there any valid reasons for not observing
+I'm surprised this is not a `MUST`? Are there any valid reasons for not observing
 order?
 
 
