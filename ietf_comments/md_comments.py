@@ -45,7 +45,7 @@ class CommentRenderer(Renderer):
                 self.cleanup()
             else:
                 content = self.get_buffer()
-                getattr(self, f"handle_h{node.level}")(content.lower())
+                getattr(self, f"handle_h{node.level}")(content)
         else:
             if entering:
                 self._buffer.append(f"{'#' * (node.level - 1)} ")
@@ -57,7 +57,7 @@ class CommentRenderer(Renderer):
             self.ui.error("More than one h1 header.")
         self.title = content
         docname = None
-        words = content.split()
+        words = content.lower().split()
         for word in words:
             if word.startswith("draft-"):
                 docname = word
