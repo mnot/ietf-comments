@@ -35,6 +35,9 @@ class CommentRenderer(Renderer):
         if self._context_buffer:
             self._context_buffer.append(" ")
 
+    def linebreak(self, node, entering):
+        self._buffer.append("\n\n")
+
     def text(self, node, entering=None):
         self._buffer.append(node.literal)
         if self._context is not None:
@@ -47,7 +50,7 @@ class CommentRenderer(Renderer):
         self._buffer.append("**")
 
     def paragraph(self, node, entering):
-        if not entering:
+        if not entering and node.parent.t != "item":
             self._buffer.append("\n\n")
 
     def link(self, node, entering):
@@ -55,6 +58,13 @@ class CommentRenderer(Renderer):
             self._buffer.append("[")
         else:
             self._buffer.append(f"]({node.destination})")
+
+    def code(self, node, entering):
+        self._buffer.append(f"`{node.literal}`")
+
+    def code_block(self, node, entering):
+        info = node.info or ""
+        self._buffer.append(f"~~~ {info}\n{node.literal}~~~\n")
 
     def item(self, node, entering):
         if entering:
