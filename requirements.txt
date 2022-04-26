@@ -1,6 +1,6 @@
 commonmark
 pygithub
-colorama
+blessings
 requests
 pylint>=2.4.4
 mypy>=0.770

@@ -6,7 +6,8 @@ from .md_comments import parse_markdown_comments
 from .xml_comments import parse_xml_comments
 from .github import create_issues
 
-from colorama import Fore, Style
+from blessings import Terminal
+term = Terminal()
 
 
 class Cli:
@@ -16,23 +17,23 @@ class Cli:
 
     @classmethod
     def status(cls, name, value):
-        sys.stderr.write(f"{Fore.GREEN}{name}:{Style.RESET_ALL} {value}\n")
+        sys.stderr.write(f"{term.green}{name}:{term.normal} {value}\n")
 
     @classmethod
     def warn(cls, message, source=""):
         if source:
             source = f"{source} "
-        sys.stderr.write(f"{Fore.YELLOW}{source}Warning{Style.RESET_ALL}: {message}\n")
+        sys.stderr.write(f"{term.yellow}{source}Warning{term.normal}: {message}\n")
 
     @classmethod
     def error(cls, message, source=""):
         if source:
             source = f"{source} "
-        sys.stderr.write(f"{Fore.RED}{source}Error{Style.RESET_ALL}: {message}\n")
+        sys.stderr.write(f"{term.red}{source}Error{term.normal}: {message}\n")
         sys.exit(1)
 
     def comment(self, comment):
-        self.out(f"{Fore.BLUE}## {comment[0]}{Style.RESET_ALL}\n")
+        self.out(f"{term.blue}## {comment[0]}{term.normal}\n")
         self.out(f"{comment[1]}\n")
         self.out("\n")
 
@@ -101,7 +102,7 @@ def ietf_comments_cli():
                 args.start_num,
             )
         else:
-            cli.out(f"\n{Fore.GREEN}# {issue_type}{Style.RESET_ALL}\n")
+            cli.out(f"\n{term.green}# {issue_type}{term.normal}\n")
             for comment in these_comments:
                 cli.comment(comment)
 
