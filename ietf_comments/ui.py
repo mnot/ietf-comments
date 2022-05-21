@@ -7,6 +7,7 @@ from .xml_comments import parse_xml_comments
 from .github import create_issues
 
 from blessings import Terminal
+
 term = Terminal()
 
 
@@ -81,17 +82,16 @@ def ietf_comments_cli():
     cli = Cli()
     comments = parse_markdown_comments(args.comment_file, cli)
     base = f"https://www.ietf.org/archive/id/{comments.doc}-{comments.revision}.html"
-    cli.status(f"Document", comments.doc)
-    cli.status(f"Revision", comments.revision)
+    cli.status("Document", comments.doc)
+    cli.status("Revision", comments.revision)
     if comments.cc:
-        cli.status(f"CC", f"@{comments.cc}")
+        cli.status("CC", f"@{comments.cc}")
     for issue_type in comments.sections:
         these_comments = comments.issues[issue_type]
         if args.github_repo:
+            labels = args.github_label or []
             if args.auto_label:
-                labels = ["review", issue_type]
-            else:
-                labels = args.github_label or []
+                labels.extend(["review", issue_type])
             create_issues(
                 args.github_repo,
                 cli,
