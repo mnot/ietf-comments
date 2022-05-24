@@ -3,6 +3,9 @@
 
 cc @test_github_user
 
+Thank you for a well-written document. Please take a look at the comments below and submit
+an updated document if necessary.
+
 ## Comments
 
 ### Preserving existing members
