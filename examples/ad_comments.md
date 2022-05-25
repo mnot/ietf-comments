@@ -27,6 +27,8 @@ automated tools (via https://github.com/larseggert/ietf-reviewtool), so there
 will likely be some false positives. There is no need to let me know what you
 did with these suggestions.
 
+### Editorial comments
+
 "Table of Contents", paragraph 2, nit:
 > critical infrastructure of many Web sites.
 

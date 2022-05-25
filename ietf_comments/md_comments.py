@@ -138,10 +138,8 @@ class CommentRenderer(Renderer):
 
     def cleanup(self):
         if self._section:
-            if self._current_issue is None:
-                self._current_issue = self.title
             text = self.get_buffer()
-            if text:
+            if self._current_issue and text:
                 self.issues[self._section].append((self._current_issue, text))
         else:
             self.process_preface()

@@ -38,16 +38,23 @@ This first part can contain other content (e.g., acknowledgements, a preface, et
 
 ## Review Comments
 
-Then, the document can contain `discuss`, `comment`, and `nit` positions, each in their own subsection indicated by a `h2` header. Issues within a section should each have a descriptive title in a `h3` header (i.e., two octothorps); if there are no `h3` headers, the entire section will be considered a single issue.
+Then, the document can contain `discuss`, `comment`, and `nit` positions, each in their own subsection indicated by a `h2` header, followed by optional free text and then any number of issues.
 
-Comments can contain any markdown, including blockquotes, links, emphasis, lists, etc.
+Issues within a section should each have a descriptive title in a `h3` header (i.e., two octothorps). Issues can contain any markdown, including blockquotes, links, emphasis, lists, etc.
 
 For example:
 
 ~~~ markdown
+# AD Review for draft-ietf-whatever-whenever-00
+
+Thanks for a well-written document. My comments are below.
+
 ## Discuss
 
-This document has serious implications for the space/time continuum. We should discuss.
+### Space/Time
+
+This document has serious implications for the space/time continuum. We should
+talk about that.
 
 ## Comments
 
