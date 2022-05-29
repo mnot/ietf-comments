@@ -18,11 +18,11 @@ For IESG and directorate comments, this tool uses the [IETF Comment Markdown for
 
 ## Installation
 
-To install ietf-comments, you'll need [Python 3.10](https://www.python.org/) or greater. Then, run:
+To install ietf-comments, you'll need [Python 3.6](https://www.python.org/) or greater. Then, run:
 
 > pip3 install ietf-comments
 
-Note that if your pip is using another version of Python, it will silently install an outdated version of the package. To assure that Python 3.10 is being used, you may need to use something like:
+**Note** that to use rfced-comments, you'll need Python 3.10 or greater. To assure that Python 3.10 is being used, you may need to use something like:
 
 > python3.10 -m pip install ietf-comments
 

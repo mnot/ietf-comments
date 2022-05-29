@@ -126,6 +126,9 @@ def parse_ietf_args():
 
 
 def rfced_comments_cli():
+    if sys.version_info.minor < 10:
+        sys.stderr.write("ERROR: rfced-comments requires Python 3.10.\n")
+        sys.exit(1)
     args = parse_rfced_args()
     cli = Cli()
     comments = parse_xml_comments(args.rfc, cli)
