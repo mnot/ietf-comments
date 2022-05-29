@@ -3,7 +3,6 @@ import sys
 
 from . import __version__
 from .md_comments import parse_markdown_comments
-from .xml_comments import parse_xml_comments
 from .github import create_issues
 
 from blessings import Terminal
@@ -129,6 +128,8 @@ def rfced_comments_cli():
     if sys.version_info.minor < 10:
         sys.stderr.write("ERROR: rfced-comments requires Python 3.10.\n")
         sys.exit(1)
+    from .xml_comments import parse_xml_comments
+
     args = parse_rfced_args()
     cli = Cli()
     comments = parse_xml_comments(args.rfc, cli)
