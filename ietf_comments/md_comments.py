@@ -76,11 +76,12 @@ class CommentRenderer(Renderer):
             self._context = self.BLOCK
         else:
             self._context = None
-            content = "".join(self._context_buffer)
-            self._context_buffer = []
-            change_location = self.changes.find_change_line(content)
-            if change_location is None:
-                self.ui.warn(f"Can't find quoted text in document: {content}")
+            content = "".join(self._context_buffer).strip()
+            if content:
+                self._context_buffer = []
+                change_location = self.changes.find_change_line(content)
+                if change_location is None:
+                    self.ui.warn(f"Can't find quoted text in document: {content}")
 
     def heading(self, node, entering):
         if node.level < 4:
