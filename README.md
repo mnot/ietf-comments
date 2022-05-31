@@ -2,7 +2,7 @@
 # The IETF Comments Processor
 
 ![Python version requirement](https://badgen.net/pypi/python/ietf-comments)
-[![Package version](https://badgen.net/pypi/v/ietf-comments)](https://pypi.org/project/ietf-comments/)
+[![Package version](https://badgen.net/pypi/v/ietf-comments)](https://pypi.org/project/ietf-comments/) [![Code Quality](https://github.com/mnot/ietf-comments/actions/workflows/quality.yml/badge.svg)](https://github.com/mnot/ietf-comments/actions/workflows/quality.yml)
 
 Handling comments from the IESG, multiple directorate reviews, and in AUTH48 can be burdensome for document authors, because of the sheer number of comments, and because they come in an unstructured format that has to be manually processed.
 
