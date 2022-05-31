@@ -1,0 +1,34 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+    - '**.py'
+    - '**.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+    - '**.py'
+
+
+jobs:
+  build:
+    runs-on: "ubuntu-latest"
+    steps:
+    - uses: actions/checkout@main
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: "3.10"
+    - name: Cache venv
+      uses: actions/cache@v3
+      with:
+        path: .venv
+        key: ${{ runner.os }}-${{ matrix.python-version }}-venv-${{ hashFiles('**/requirements.txt') }}
+    - name: Set up venv
+      run: make venv
+    - name: Typecheck
+      run: make typecheck
+    - name: Lint
+      run: make lint
