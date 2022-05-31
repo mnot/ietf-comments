@@ -13,7 +13,7 @@ class CommentRenderer(commonmark.render.renderer.Renderer):
     section_map = {"discusses": "discuss", "comments": "comment", "nits": "nit"}
     BLOCK = "block"
 
-    def __init__(self, ui: Ui, options: Dict[str, Any] = {}) -> None:
+    def __init__(self, ui: Ui, options: Dict[str, Any] = None) -> None:
         self.ui = ui
         self.options = options
         self._buffer: List[str] = []

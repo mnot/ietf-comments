@@ -129,7 +129,9 @@ def rfced_comments_cli() -> None:
     if sys.version_info.minor < 10:
         sys.stderr.write("ERROR: rfced-comments requires Python 3.10.\n")
         sys.exit(1)
-    from .xml_comments import parse_xml_comments
+    from .xml_comments import (  # pylint: disable=import-outside-toplevel
+        parse_xml_comments,
+    )
 
     args = parse_rfced_args()
     cli = Cli()

@@ -18,8 +18,8 @@ class GithubRepo:
                 "GITHUB_ACCESS_TOKEN not set. See: <https://github.com/settings/tokens>"
             )
         try:
-            g = Github(token)
-            self.repo = g.get_repo(reponame)
+            gh = Github(token)
+            self.repo = gh.get_repo(reponame)
         except GithubException as err:
             ui.error(str(err.data["message"]), "GitHub Repo")
 

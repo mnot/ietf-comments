@@ -2,20 +2,20 @@ import re
 from typing import Optional
 
 
-flags = re.IGNORECASE | re.MULTILINE | re.VERBOSE
-ref = r"[a-zA-Z0-9\-_]+"
+FLAGS = re.IGNORECASE | re.MULTILINE | re.VERBOSE
+TOKEN = r"[a-zA-Z0-9\-_]+"
 section_finder = re.compile(
     rf"""
 (?:
-    \[(?P<comma_ref>{ref})\],\s*
+    \[(?P<comma_ref>{TOKEN})\],\s*
 )?
 (?P<section>(?:section|sections|appendix|§)\s+)
 (?P<num>[\d\.]*\d)\.?
 (?:
-    \s+of\s+\[(?P<of_ref>{ref})\]
+    \s+of\s+\[(?P<of_ref>{TOKEN})\]
 )?
 """,
-    flags,
+    FLAGS,
 )
 
 
@@ -32,17 +32,14 @@ def linkify(text: str, spec_uri: str) -> str:
             link = find_ref_uri(ref)
             if link:
                 return f"[{ref}]({link}), [{section}{num}]({link}#{sref}-{num})"
-            else:
-                return f"[{ref}], {section}{num}"
-        elif matchobj.group("of_ref"):
+            return f"[{ref}], {section}{num}"
+        if matchobj.group("of_ref"):
             ref = matchobj.group("of_ref")
             link = find_ref_uri(ref)
             if link:
                 return f"[{section}{num}]({link}#{sref}-{num}) of [{ref}]({link})"
-            else:
-                return f"{section}{num} of [{ref}]"
-        else:
-            return f"[{section}{num}]({spec_uri}#{sref}-{num})"
+            return f"{section}{num} of [{ref}]"
+        return f"[{section}{num}]({spec_uri}#{sref}-{num})"
 
     return section_finder.sub(linker, text)
 
