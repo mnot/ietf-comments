@@ -53,7 +53,7 @@ build: clean venv
 	$(VENV)/python -m build
 
 .PHONY: upload
-upload: build test version
+upload: build test version venv
 	git tag $(PROJECT)-$(VERSION)
 	git push
 	git push --tags origin
