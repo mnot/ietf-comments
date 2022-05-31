@@ -35,6 +35,11 @@ tidy: venv
 lint: venv
 	PYTHONPATH=$(VENV) $(VENV)/pylint --output-format=colorized $(PROJECT)
 
+.PHONY: typecheck
+typecheck: venv
+	PYTHONPATH=$(VENV) $(VENV)/python -m mypy ietf_comments
+
+
 
 #############################################################################
 ## Distribution

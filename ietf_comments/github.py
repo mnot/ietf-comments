@@ -1,15 +1,17 @@
 import os
+from typing import List
 
-from github import Github, GithubException
+from github import Github, Label, GithubException
 from github.GithubException import UnknownObjectException
 
 from .linkify import linkify
+from .types import CommentType, Ui
 
 DEFAULT_COLOUR = "b6d7a8"
 
 
 class GithubRepo:
-    def __init__(self, reponame, ui):
+    def __init__(self, reponame: str, ui: Ui) -> None:
         token = os.environ.get("GITHUB_ACCESS_TOKEN", None)
         if token is None:
             ui.error(
@@ -19,10 +21,10 @@ class GithubRepo:
             g = Github(token)
             self.repo = g.get_repo(reponame)
         except GithubException as err:
-            ui.error(err.data["message"], "GitHub Repo")
+            ui.error(str(err.data["message"]), "GitHub Repo")
 
-    def create_issue(self, title, content, labels, cc):
-        _labels = []
+    def create_issue(self, title: str, content: str, labels: List[str], cc: str) -> int:
+        _labels: List[Label.Label] = []
         for label_text in labels:
             try:
                 label = self.repo.get_label(label_text)
@@ -37,7 +39,15 @@ class GithubRepo:
         return issue.number
 
 
-def create_issues(reponame, ui, base, comments, labels, cc=None, start_num=None):
+def create_issues(
+    reponame: str,
+    ui: Ui,
+    base: str,
+    comments: List[CommentType],
+    labels: List[str],
+    cc: str = None,
+    start_num: int = None,
+) -> None:
     repo = GithubRepo(reponame, ui)
     if labels is None:
         labels = []
@@ -56,5 +66,5 @@ def create_issues(reponame, ui, base, comments, labels, cc=None, start_num=None)
         ui.status(f"* Created issue {number} in {reponame}", f"{title}")
 
 
-def normalise_ws(text):
+def normalise_ws(text: str) -> str:
     return " ".join(text.split())

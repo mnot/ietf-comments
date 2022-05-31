@@ -1,44 +1,45 @@
 import argparse
 import sys
 
+from blessings import Terminal  # type: ignore[import]
+
 from . import __version__
 from .md_comments import parse_markdown_comments
 from .github import create_issues
-
-from blessings import Terminal
+from .types import CommentType, Ui
 
 term = Terminal()
 
 
-class Cli:
+class Cli(Ui):
     @classmethod
-    def out(cls, content):
+    def out(cls, content: str) -> None:
         sys.stdout.write(content)
 
     @classmethod
-    def status(cls, name, value):
+    def status(cls, name: str, value: str) -> None:
         sys.stderr.write(f"{term.green}{name}:{term.normal} {value}\n")
 
     @classmethod
-    def warn(cls, message, source=""):
+    def warn(cls, message: str, source: str = "") -> None:
         if source:
             source = f"{source} "
         sys.stderr.write(f"{term.yellow}{source}Warning{term.normal}: {message}\n")
 
     @classmethod
-    def error(cls, message, source=""):
+    def error(cls, message: str, source: str = "") -> None:
         if source:
             source = f"{source} "
         sys.stderr.write(f"{term.red}{source}Error{term.normal}: {message}\n")
         sys.exit(1)
 
-    def comment(self, comment):
+    def comment(self, comment: CommentType) -> None:
         self.out(f"{term.blue}## {comment[0]}{term.normal}\n")
         self.out(f"{comment[1]}\n")
         self.out("\n")
 
 
-def base_arg_parser(description):
+def base_arg_parser(description: str) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument(
         "-g",
@@ -76,7 +77,7 @@ def base_arg_parser(description):
     return parser
 
 
-def ietf_comments_cli():
+def ietf_comments_cli() -> None:
     args = parse_ietf_args()
     cli = Cli()
     comments = parse_markdown_comments(args.comment_file, cli)
@@ -106,7 +107,7 @@ def ietf_comments_cli():
                 cli.comment(comment)
 
 
-def parse_ietf_args():
+def parse_ietf_args() -> argparse.Namespace:
     parser = base_arg_parser("Process a markdown file containing IETF comments")
     parser.add_argument(
         "-a",
@@ -124,7 +125,7 @@ def parse_ietf_args():
     return parser.parse_args()
 
 
-def rfced_comments_cli():
+def rfced_comments_cli() -> None:
     if sys.version_info.minor < 10:
         sys.stderr.write("ERROR: rfced-comments requires Python 3.10.\n")
         sys.exit(1)
@@ -148,7 +149,7 @@ def rfced_comments_cli():
             cli.comment(comment)
 
 
-def parse_rfced_args():
+def parse_rfced_args() -> argparse.Namespace:
     parser = base_arg_parser("Process an AUTH48 draft for RFC Editor comments")
     parser.add_argument(
         "rfc",

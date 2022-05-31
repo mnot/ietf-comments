@@ -1,16 +1,20 @@
+from typing import Tuple
+
 import requests
+
+from .types import Ui
 
 
 class DocChanges:
     URL_BASE = "https://www.ietf.org/archive/id/"
 
-    def __init__(self, docname, revision, ui):
+    def __init__(self, docname: str, revision: str, ui: Ui) -> None:
         self.docname = docname
         self.revision = revision
         self.ui = ui
         self.text_doc = self.get_doc("txt")
 
-    def get_doc(self, doctype):
+    def get_doc(self, doctype: str) -> str:
         res = requests.get(f"{self.URL_BASE}/{self.docname}-{self.revision}.{doctype}")
         if res.status_code != 200:
             self.ui.warn(
@@ -19,7 +23,7 @@ class DocChanges:
         doc = res.text
         return doc
 
-    def find_change_line(self, old):
+    def find_change_line(self, old: str) -> Tuple[int, int]:
         old_words = old.split()
         old_word_count = len(old_words)
         line_no = 0
@@ -48,3 +52,4 @@ class DocChanges:
                         return line_no - lines_consumed, lines_consumed + 1
                 if line_words_consumed + start_word == line_word_count:
                     lines_consumed += 1
+        return (0, 0)

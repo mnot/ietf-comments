@@ -1,76 +1,84 @@
-import commonmark
-from commonmark.render.renderer import Renderer
+from typing import Dict, List, Any, Optional, IO
+
+import commonmark  # type: ignore[import]
+from commonmark.node import Node  # type: ignore[import]
+
 
 from .changes import DocChanges
+from .types import CommentType, Ui
 
 
-class CommentRenderer(Renderer):
+class CommentRenderer(commonmark.render.renderer.Renderer):
     sections = ["discuss", "comment", "nit"]
     section_map = {"discusses": "discuss", "comments": "comment", "nits": "nit"}
     BLOCK = "block"
 
-    def __init__(self, ui, options={}):
+    def __init__(self, ui: Ui, options: Dict[str, Any] = {}) -> None:
         self.ui = ui
         self.options = options
-        self._buffer = []
-        self._section = None
-        self._current_issue = None
-        self._context = None
-        self._context_buffer = []
-        self.title = None
-        self.doc = None
-        self.revision = None
-        self.cc = None
-        self.changes = None
-        self.issues = {"discuss": [], "comment": [], "nit": []}
+        self._buffer: List[str] = []
+        self._section: str = None
+        self._current_issue: str = None
+        self._context: str = None
+        self._context_buffer: List[str] = []
+        self.title: str = None
+        self.doc: str = None
+        self.revision: str = None
+        self.cc: str = None
+        self.changes: Optional[DocChanges] = None
+        self.issues: Dict[str, List[CommentType]] = {
+            "discuss": [],
+            "comment": [],
+            "nit": [],
+        }
 
-    def document(self, node, entering):
+    def document(self, node: Node, entering: bool) -> None:
         if not entering:
             self.cleanup()
             if sum([len(l) for l in self.issues.values()]) == 0:
                 self.ui.warn("Did not find any issues.")
 
-    def softbreak(self, node, entering=None):
+    def softbreak(self, node: Node, entering: bool = None) -> None:
         self._buffer.append(" ")
         if self._context_buffer:
             self._context_buffer.append(" ")
 
-    def linebreak(self, node, entering):
+    def linebreak(self, node: Node, entering: bool) -> None:
         self._buffer.append("\n\n")
 
-    def text(self, node, entering=None):
+    def text(self, node: Node, entering: bool = None) -> None:
         self._buffer.append(node.literal)
         if self._context is not None:
             self._context_buffer.append(node.literal)
 
-    def emph(self, node, entering):
+    def emph(self, node: Node, entering: bool) -> None:
         self._buffer.append("_")
 
-    def strong(self, node, entering):
+    def strong(self, node: Node, entering: bool) -> None:
         self._buffer.append("**")
 
-    def paragraph(self, node, entering):
+    def paragraph(self, node: Node, entering: bool) -> None:
         if not entering and node.parent.t != "item":
             self._buffer.append("\n\n")
 
-    def link(self, node, entering):
+    def link(self, node: Node, entering: bool) -> None:
         if entering:
             self._buffer.append("[")
         else:
             self._buffer.append(f"]({node.destination})")
 
-    def code(self, node, entering):
+    def code(self, node: Node, entering: bool) -> None:
         self._buffer.append(f"`{node.literal}`")
 
-    def code_block(self, node, entering):
+    def code_block(self, node: Node, entering: bool) -> None:
         info = node.info or ""
         self._buffer.append(f"~~~ {info}\n{node.literal}~~~\n")
 
-    def item(self, node, entering):
+    def item(self, node: Node, entering: bool) -> None:
         if entering:
             self._buffer.append("* ")
 
-    def block_quote(self, node, entering):
+    def block_quote(self, node: Node, entering: bool) -> None:
         if entering:
             self._buffer.append("> ")
             self._context = self.BLOCK
@@ -83,7 +91,7 @@ class CommentRenderer(Renderer):
                 if change_location is None:
                     self.ui.warn(f"Can't find quoted text in document: {content}")
 
-    def heading(self, node, entering):
+    def heading(self, node: Node, entering: bool) -> None:
         if node.level < 4:
             if entering:
                 self.cleanup()
@@ -96,7 +104,7 @@ class CommentRenderer(Renderer):
             else:
                 self._buffer.append("\n\n")
 
-    def handle_h1(self, content):
+    def handle_h1(self, content: str) -> None:
         if self.doc is not None:
             self.ui.error("More than one h1 header.")
         self.title = content
@@ -119,7 +127,7 @@ class CommentRenderer(Renderer):
             self.ui.error("h1 header draft name doesn't include revision")
         self.changes = DocChanges(self.doc, self.revision, self.ui)
 
-    def handle_h2(self, content):
+    def handle_h2(self, content: str) -> None:
         content = content.lower()
         if content in self.section_map:
             content = self.section_map[content]
@@ -127,17 +135,17 @@ class CommentRenderer(Renderer):
             self._section = content
         else:
             self.ui.warn(f"Unrecognised h2 section {content}.")
-            self._section = None
+            self._section = ""
 
-    def handle_h3(self, content):
+    def handle_h3(self, content: str) -> None:
         self._current_issue = content
 
-    def get_buffer(self):
+    def get_buffer(self) -> str:
         content = "".join(self._buffer)
         self._buffer = []
         return content
 
-    def cleanup(self):
+    def cleanup(self) -> None:
         if self._section:
             text = self.get_buffer()
             if self._current_issue and text:
@@ -147,7 +155,7 @@ class CommentRenderer(Renderer):
         self._current_issue = None
         self._buffer = []
 
-    def process_preface(self):
+    def process_preface(self) -> None:
         text = self.get_buffer()
         if text:
             for line in text.split("\n"):
@@ -156,7 +164,7 @@ class CommentRenderer(Renderer):
                     break
 
 
-def parse_markdown_comments(fd, ui):
+def parse_markdown_comments(fd: IO, ui: Ui) -> CommentRenderer:
     parser = commonmark.Parser()
     doc = parser.parse(fd.read())
     renderer = CommentRenderer(ui)

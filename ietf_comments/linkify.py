@@ -1,4 +1,5 @@
 import re
+from typing import Optional
 
 
 flags = re.IGNORECASE | re.MULTILINE | re.VERBOSE
@@ -18,8 +19,8 @@ section_finder = re.compile(
 )
 
 
-def linkify(text, spec_uri):
-    def linker(matchobj):
+def linkify(text: str, spec_uri: str) -> str:
+    def linker(matchobj: re.Match) -> str:
         section = matchobj.group("section")
         if section.lower().strip() == "appendix":
             sref = "appendix"
@@ -46,9 +47,10 @@ def linkify(text, spec_uri):
     return section_finder.sub(linker, text)
 
 
-def find_ref_uri(ref):
+def find_ref_uri(ref: str) -> Optional[str]:
     if ref[:3].lower() == "rfc" and ref[3:].isnumeric():
         return f"https://rfc-editor.org/rfc/rfc{ref[3:]}.html"
+    return None
 
 
 if __name__ == "__main__":
