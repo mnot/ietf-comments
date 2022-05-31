@@ -1,7 +1,7 @@
 PROJECT=ietf_comments
 
 #############################################################################
-## Tasks
+## Tests
 
 .PHONY: test
 test: test-ietf test-rfced
@@ -16,11 +16,14 @@ test-rfced: venv
 	PYTHONPATH=$(VENV) $(VENV)/pip install .
 	PYTHONPATH=$(VENV):. $(VENV)/rfced-comments ./examples/rfced_comments.xml
 
+
+#############################################################################
+## Tasks
+
 .PHONY: cli
 cli: venv
 	PYTHONPATH=$(VENV) $(VENV)/pip install .
 	PYTHONPATH=$(VENV):. sh
-
 
 .PHONY: clean
 clean:
@@ -37,7 +40,7 @@ lint: venv
 
 .PHONY: typecheck
 typecheck: venv
-	PYTHONPATH=$(VENV) $(VENV)/python -m mypy ietf_comments
+	PYTHONPATH=$(VENV) $(VENV)/python -m mypy $(PROJECT)
 
 
 
@@ -58,7 +61,6 @@ upload: build test version venv
 	git push
 	git push --tags origin
 	$(VENV)/python -m twine upload dist/*
-
 
 
 include Makefile.venv
