@@ -16,6 +16,11 @@ Both can be used to create GitHub issues for the comments they find. When used p
 For IESG and directorate comments, this tool uses the [IETF Comment Markdown format](https://github.com/mnot/ietf-comments/tree/main/format.md), which is a semi-structured format that is similar to that which ADs and directorates use now. Ideally, they will create comments in that format for easy processing, but even when they don't, most comments can easily be transformed into it for processing.
 
 
+## Online Validator
+
+If you just need to validate markdown comments, see the [online comments valdiator](https://mnot.github.io/ietf-comments/).
+
+
 ## Installation
 
 To install ietf-comments, you'll need [Python 3.6](https://www.python.org/) or greater. Then, run:
