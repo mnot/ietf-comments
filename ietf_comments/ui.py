@@ -1,12 +1,19 @@
 import argparse
 import sys
 
+# pylint: disable=wrong-import-position
+# monkeypatch to use requests rather than xmlhttprequest. yes, this is nasty.
+import ietf_comments_engine.util
+import requests
+
+ietf_comments_engine.util.get = requests.get  # type: ignore[assignment]
+
 from blessings import Terminal  # type: ignore[import]
+from ietf_comments_engine.md_comments import parse_markdown_comments
+from ietf_comments_engine.types import CommentType, Ui
 
 from . import __version__
-from .md_comments import parse_markdown_comments
 from .github import create_issues
-from .types import CommentType, Ui
 
 term = Terminal()
 
@@ -16,18 +23,15 @@ class Cli(Ui):
     def out(cls, content: str) -> None:
         sys.stdout.write(content)
 
-    @classmethod
-    def status(cls, name: str, value: str) -> None:
+    def status(self, name: str, value: str) -> None:
         sys.stderr.write(f"{term.green}{name}:{term.normal} {value}\n")
 
-    @classmethod
-    def warn(cls, message: str, source: str = "") -> None:
+    def warn(self, message: str, source: str = "") -> None:
         if source:
             source = f"{source} "
         sys.stderr.write(f"{term.yellow}{source}Warning{term.normal}: {message}\n")
 
-    @classmethod
-    def error(cls, message: str, source: str = "") -> None:
+    def error(self, message: str, source: str = "") -> None:
         if source:
             source = f"{source} "
         sys.stderr.write(f"{term.red}{source}Error{term.normal}: {message}\n")
@@ -80,7 +84,7 @@ def base_arg_parser(description: str) -> argparse.ArgumentParser:
 def ietf_comments_cli() -> None:
     args = parse_ietf_args()
     cli = Cli()
-    comments = parse_markdown_comments(args.comment_file, cli)
+    comments = parse_markdown_comments(args.comment_file.read(), cli)
     base = f"https://www.ietf.org/archive/id/{comments.doc}-{comments.revision}.html"
     cli.status("Document", comments.doc)
     cli.status("Revision", comments.revision)
@@ -129,7 +133,7 @@ def rfced_comments_cli() -> None:
     if sys.version_info.minor < 10:
         sys.stderr.write("ERROR: rfced-comments requires Python 3.10.\n")
         sys.exit(1)
-    from .xml_comments import (  # pylint: disable=import-outside-toplevel
+    from ietf_comments_engine.xml_comments import (  # pylint: disable=import-outside-toplevel
         parse_xml_comments,
     )
 

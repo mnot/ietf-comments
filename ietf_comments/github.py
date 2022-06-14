@@ -3,9 +3,9 @@ from typing import List
 
 from github import Github, Label, GithubException
 from github.GithubException import UnknownObjectException
+from ietf_comments_engine.types import CommentType, Ui
 
 from .linkify import linkify
-from .types import CommentType, Ui
 
 DEFAULT_COLOUR = "b6d7a8"
 
