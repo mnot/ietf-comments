@@ -5,7 +5,15 @@
     <title>IETF Comments Validation Tool</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' media='screen' href='https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css'>
-    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <script defer src="/lib/pyscript.min.js"></script>
+    <py-config>
+      - autoclose_loader: true
+      - runtimes:
+        -
+          src: "/lib/pyodide/pyodide.js"
+          name: pyodide-0.20
+          lang: python
+    </py-config>
     <py-env>
          - ietf-comments-engine
      </py-env>
