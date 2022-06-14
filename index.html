@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>IETF Comments Validation Tool</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css'>
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <py-env>
+         - ietf-comments-engine
+     </py-env>
+</head>
+<body>
+
+  <div class="container is-white is-fluid" style="margin-top:45px">
+    <p class="title is-3">IETF Comments Validation Tool</p>
+
+    <div class="field">
+        <label class="label">Enter your review Markdown</label>
+        <div class="control">
+            <textarea class="textarea" placeholder="" id="markdown"></textarea>
+        </div>
+    </div>
+
+    <div class="control">
+        <button id="run" type="button" class="button" pys-onClick="run">Run</button>
+        <button id="clear" type="button" class="button is-danger" pys-onClick="clear">Clear</button>
+    </div>
+
+    <br>
+    
+    <ul id="status"></ul>
+    
+    <hr>
+    
+    <ul id="issues"></ul>
+</div>
+
+
+<py-script>
+from ietf_comments_engine.md_comments import parse_markdown_comments
+
+class WebUi:
+    def __init__(self):
+        self.status_list = document.querySelector("#status")
+        self.issue_list = document.querySelector("#issues")
+        self.clear()
+        self.warning_count = 0
+        self.error_count = 0
+        
+    def status(self, name: str, value: str) -> None:
+        issue = document.createElement("li")
+        issue.innerText = f"{name}: {value}"
+        self.status_list.appendChild(issue)
+
+    def warn(self, message: str, source: str = "") -> None:
+        self.warning_count += 1
+        issue = document.createElement("li")
+        issue.innerText = f"Warning: {message}"
+        issue.style.color = "orange"
+        self.issue_list.appendChild(issue)
+
+    def error(self, message: str, source: str = "") -> None:
+        self.error_count += 1
+        issue = document.createElement("li")
+        issue.innerText = f"Error: {message}"
+        issue.style.color = "red"
+        self.issue_list.appendChild(issue)
+        
+    def clear(self) -> None:
+        self.status_list.innerHTML = ''
+        self.issue_list.innerHTML = ''
+
+markdown_element = Element("markdown")
+
+def clear(*args, **kwargs):
+    markdown_element.clear()
+
+def run(*args, **kwargs):
+    console.log("running...")
+    markdown = markdown_element.value
+    webui = WebUi()
+    comments = parse_markdown_comments(markdown, webui)
+    webui.status("Document", comments.doc)
+    webui.status("Revision", comments.revision)
+    if comments.cc:
+        webui.status("CC", f"@{comments.cc}")
+    webui.status("Errors", webui.error_count)
+    webui.status("Warnings", webui.warning_count)
+        
+Element("run").add_class("is-primary")
+</py-script>
+
+</body>
+</html>
