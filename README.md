@@ -23,7 +23,13 @@ If you just need to validate markdown comments, see the [online comments valdiat
 
 ## Installation
 
-To install ietf-comments, you'll need [Python 3.6](https://www.python.org/) or greater. Then, run:
+To install ietf-comments, you'll need [Python 3.6](https://www.python.org/) or greater. 
+
+The best way to install it is using [pipx](https://pypa.github.io/pipx/), because that will created an isolated environment for the dependencies:
+
+> pipx install ietf-comments
+
+Alternatively, you can install it directly using pip:
 
 > pip3 install ietf-comments
 
