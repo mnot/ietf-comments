@@ -18,7 +18,7 @@ For IESG and directorate comments, this tool uses the [IETF Comment Markdown for
 
 ## Online Validator
 
-If you just need to validate markdown comments, see the [online comments valdiator](https://mnot.github.io/ietf-comments/).
+If you just need to validate markdown comments, see the [online comments validator](https://mnot.github.io/ietf-comments/).
 
 
 ## Installation
