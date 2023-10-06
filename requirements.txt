@@ -1,5 +1,5 @@
 ietf_comments_engine
-pygithub==1.59.1
+pygithub==2.1.1
 blessings==1.7
 pylint>=2.4.4
 mypy>=0.770
