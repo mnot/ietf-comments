@@ -4,6 +4,9 @@ __pycache__
 /MANIFEST
 /dist
 /build
+/changelog.md
+/.coverage
 /.mypy_cache
+/.pytest_cache
 /.venv
-*.egg-info
+/*.egg-info
