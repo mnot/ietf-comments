@@ -20,7 +20,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["mypy", "black", "pylint", "pytest", "pytest-md", "validate-pyproject", "build"]
+dev = ["mypy", "black", "pylint", "pytest", "pytest-md", "validate-pyproject", "build",
+       "types-requests"]
 
 [project.urls]
 homepage = "https://github.com/mnot/ietf-comments"

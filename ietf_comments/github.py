@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Optional
 
 from github import Github, Label, GithubException
 from github.GithubException import UnknownObjectException
@@ -45,12 +45,10 @@ def create_issues(
     base: str,
     comments: List[CommentType],
     labels: List[str],
-    cc: str = None,
-    start_num: int = None,
+    cc: str = "",
+    start_num: Optional[int] = None,
 ) -> None:
     repo = GithubRepo(reponame, ui)
-    if labels is None:
-        labels = []
     for num, comment in enumerate(comments, start=1):
         if start_num and num < start_num:
             continue

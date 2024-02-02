@@ -8,7 +8,7 @@ import requests
 
 ietf_comments_engine.util.get = requests.get  # type: ignore[assignment]
 
-from blessings import Terminal  # type: ignore[import]
+from blessings import Terminal  # type: ignore[import-untyped]
 from ietf_comments_engine.md_comments import parse_markdown_comments
 from ietf_comments_engine.types import CommentType, Ui
 
@@ -86,8 +86,8 @@ def ietf_comments_cli() -> None:
     cli = Cli()
     comments = parse_markdown_comments(args.comment_file.read(), cli)
     base = f"https://www.ietf.org/archive/id/{comments.doc}-{comments.revision}.html"
-    cli.status("Document", comments.doc)
-    cli.status("Revision", comments.revision)
+    cli.status("Document", comments.doc or "unknown")
+    cli.status("Revision", comments.revision or "unknown")
     if comments.cc:
         cli.status("CC", f"@{comments.cc}")
     for issue_type in comments.sections:
@@ -102,7 +102,7 @@ def ietf_comments_cli() -> None:
                 base,
                 these_comments,
                 labels,
-                comments.cc,
+                comments.cc or "",
                 args.start_num,
             )
         else:
