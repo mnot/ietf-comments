@@ -20,19 +20,15 @@ If you just need to validate markdown comments, see the [online comments validat
 
 ## Installation
 
-To install ietf-comments, you'll need [Python 3.6](https://www.python.org/) or greater. 
+To install ietf-comments, you'll need [Python](https://www.python.org/).
 
-The best way to install it is using [pipx](https://pypa.github.io/pipx/), because that will created an isolated environment for the dependencies:
+The best way to install it is using [pipx](https://pypa.github.io/pipx/), because that will automatically create an isolated environment for the dependencies:
 
 > pipx install ietf-comments
 
-Alternatively, you can install it directly using pip:
-
-> pip3 install ietf-comments
-
 **Note** that to use rfced-comments, you'll need Python 3.10 or greater. To assure that Python 3.10 is being used, you may need to use something like:
 
-> python3.10 -m pip install ietf-comments
+> pipx install ietf-comments --python /path/to/python3.10
 
 
 ## Use
