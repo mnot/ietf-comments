@@ -39,7 +39,7 @@ class GithubRepo:
         return issue.number
 
 
-def create_issues(
+def create_issues(  # pylint: disable=too-many-positional-arguments
     reponame: str,
     ui: Ui,
     base: str,
