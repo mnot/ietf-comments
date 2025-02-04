@@ -38,9 +38,9 @@ This first part can contain other content (e.g., acknowledgements, a preface, et
 
 ## Review Comments
 
-Then, the document can contain `discuss`, `comment`, and `nit` positions, each in their own subsection indicated by a `h2` header, followed by optional free text and then any number of issues.
+Then, the document can contain `discuss`, `comment`, and `nit` positions, each in their own subsection indicated by a `h2` header (i.e., two octothorps), followed by optional free text and then any number of issues.
 
-Issues within a section should each have a descriptive title in a `h3` header (i.e., two octothorps). Issues can contain any markdown, including blockquotes, links, emphasis, lists, etc.
+Issues within a section should each have a descriptive title in a `h3` header (i.e., three octothorps). Issues can contain any markdown, including blockquotes, links, emphasis, lists, etc.
 
 For example:
 
