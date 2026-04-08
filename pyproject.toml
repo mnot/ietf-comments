@@ -6,13 +6,14 @@ authors = [
 ]
 description = "Automating IETF comment handling"
 readme = "README.md"
-requires-python = ">=3.9"
-license = {file = "LICENSE.md"}
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE.md"]
 classifiers = [
     "Operating System :: OS Independent",
-    "Development Status :: 4 - Beta",
-    "License :: OSI Approved :: MIT License"
+    "Development Status :: 4 - Beta"
 ]
+
 dependencies = [
     "ietf_comments_engine",
     "pygithub",
@@ -42,6 +43,8 @@ version = {attr = "ietf_comments.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["."]
+include = ["ietf_comments", "ietf_comments.*"]
+namespaces = false
 
 [tool.setuptools]
 include-package-data = true
