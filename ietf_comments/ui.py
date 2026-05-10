@@ -93,7 +93,7 @@ def ietf_comments_cli() -> None:
     for issue_type in comments.sections:
         these_comments = comments.issues[issue_type]
         if args.github_repo:
-            labels = args.github_label or []
+            labels = list(args.github_label or [])
             if args.auto_label:
                 labels.extend(["review", issue_type])
             create_issues(
